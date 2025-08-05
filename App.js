@@ -13,13 +13,15 @@ import NewActivityScreen from './screens/NewActivityScreen'
 import ProfileScreen from './screens/ProfileScreen'
 import SignInScreen from './screens/SignInScreen'
 import SignUpScreen from './screens/SignUpScreen'
-import CustomTabBarBackground from './CustomTabBarBackground';
+import CustomTabBarBackground from './components/CustomTabBarBackground';
+import user from './reducers/user';
+import activities from './reducers/activities';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
 const store = configureStore({
-  reducer : {},
+  reducer : {user, activities},
 })
 
 const TabNavigator = () => {
