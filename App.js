@@ -13,38 +13,60 @@ import NewActivityScreen from './screens/NewActivityScreen'
 import ProfileScreen from './screens/ProfileScreen'
 import SignInScreen from './screens/SignInScreen'
 import SignUpScreen from './screens/SignUpScreen'
+import CustomTabBarBackground from './components/CustomTabBarBackground';
+import user from './reducers/user';
+import activities from './reducers/activities';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
 const store = configureStore({
-  reducer : {},
+  reducer : {user, activities},
 })
 
 const TabNavigator = () => {
   return (
-    <Tab.Navigator screenOptions={({ route }) => ({
-      tabBarIcon: ({ color, size }) => {
-        let iconName = '';
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ color, size }) => {
+          let iconName = '';
 
-        if (route.name === 'Home') {                        
-          iconName = 'bolt';                                 //A modifier si on le souhaite
-        } else if (route.name === 'Profile') {
-          iconName = 'user';
-        } 
+          if (route.name === 'Home') {
+            iconName = 'bolt';
+          } else if (route.name === 'Profile') {
+            iconName = 'user';
+          }
 
-        return <FontAwesome name={iconName} size={size} color={color} />;
-      },
-      tabBarActiveTintColor: '#ec6e5b',                     //A modifier à la fin
-      tabBarInactiveTintColor: '#335561',
-      headerShown: false,
-    })}>
-      <Tab.Screen name="Home" component={HomeScreen} />
-      <Tab.Screen name="Profile" component={ProfileScreen} />
+          return <FontAwesome name={iconName} size={size} color={color} />;
+        },
+        tabBarActiveTintColor: '#ec6e5b',
+        tabBarInactiveTintColor: '#335561',
+        headerShown: false,
+        // NE  PAS mettre tabBarStyle ICI car  s'applique à tous les écrans
+      })}
+    >
+      <Tab.Screen
+        name="Home"
+        component={HomeScreen}
+        options={{
+          tabBarStyle: {
+            backgroundColor: '#7333a0ff',
+            borderTopLeftRadius: 20,
+            borderTopRightRadius: 20,
+            height: 90,
+            // modifie le style de TabNav sur la page home 
+          },
+          tabBarBackground: () => <CustomTabBarBackground />
+        }}
+      />
+      <Tab.Screen
+        name="Profile"
+        component={ProfileScreen}
+        
+      />
     </Tab.Navigator>
   );
 };
-
 export default function App() {
   return (
     <Provider store={store}>
