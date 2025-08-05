@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import  { useState , useEffect } from "react";
 import {
   View,
   Text,
@@ -9,10 +9,9 @@ import {
   Button,
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { useEffect } from "react";
 
 const DatePickerWithModal = (props) => {
-  const [date, setDate] = useState(new Date());
+  const [date, setDate] = useState(new Date()); 
   const [showModal, setShowModal] = useState(false);
 
   const onChange = (event, selectedDate) => {

@@ -6,7 +6,7 @@ import { login } from '../reducers/user';
 
 const EMAIL_REGEX = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
-export default function SignInScreen({ navigation }) {
+export default function SignInScreen({ navigation }) { 
 
   	const [signInEmail, setSignInEmail] = useState('');
 	  const [signInPassword, setSignInPassword] = useState('');

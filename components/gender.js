@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import  { useState , useEffect } from "react";
 import { StyleSheet } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 
@@ -11,7 +11,12 @@ const Dropdown = (props) => {
     { label: "Non renseigné", value: "N" },
   ]);
   
-  props.selectGender(value)
+  
+
+  useEffect(() => {
+    props.selectGender(value);
+  }, [value]);
+
 
   return (
     <DropDownPicker
