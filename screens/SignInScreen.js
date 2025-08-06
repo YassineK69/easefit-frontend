@@ -19,7 +19,7 @@ export default function SignInScreen({ navigation }) {
         return 
       } 
 
-      fetch('http://10.0.0.217:3000/users/signin', {
+      fetch('https://easefit-backend.vercel.app/users/signin', {
         method: 'POST',
 			  headers: { 'Content-Type': 'application/json' },
 			  body: JSON.stringify({ email: signInEmail, password: signInPassword }),
