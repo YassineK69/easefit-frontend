@@ -3,13 +3,18 @@ import { useEffect, useState } from 'react';
 
 export default function Profile({ navigation }) {
 
-  const [user, setUser] = useState([]);
+  const [userInfos, setUserInfos] = useState([]);
+
+//Lire l'état User du store
+ const initialState = {
+ value: [],
+ };
 
   useEffect(() => {
-     fetch('http://localhost:3000/users/user/:token')
+     fetch('http://localhost:3000/userInfoss/userInfos')
      .then(response => response.json())
      .then(data => {
-       setUser(data);
+       setUserInfos(data);
      });
  }, []);
 
@@ -43,18 +48,20 @@ export default function Profile({ navigation }) {
         </View>
       
         <View style={styles.right}>
-          <TextInput>{user.firstName}</TextInput>
-          <TextInput>{user.birthday}</TextInput>
-          <TextInput>{user.gender}</TextInput>
-          <TextInput>{user.height}</TextInput>
-          <TextInput>{user.idActivities}</TextInput>
+          <TextInput>{userInfos.firstName}</TextInput>
+          <TextInput>{userInfos.birthday}</TextInput>
+          <TextInput>{userInfos.gender}</TextInput>
+          <TextInput>{userInfos.height}</TextInput>
+          <TextInput>{userInfos.idActivities}</TextInput>
       </View>
    </View>
+
       {/* <View style={styles.ligne}>
         <View style={styles.line}>
           ''
         </View>
     </View> */}
+
 </View>
     </ImageBackground>
   );
