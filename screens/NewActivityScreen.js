@@ -7,7 +7,7 @@ export default function NewActivityScreen({ navigation }) {
       <Text>Nouvelle Activité</Text>
       <View>
         <Text>Titre</Text>
-        <TextInput></TextInput>
+        <TextInput>XXX</TextInput>
       </View>
       <View>
         <Text>Sport</Text>
