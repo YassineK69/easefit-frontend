@@ -1,18 +1,19 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, Image } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
-import HomeScreen from './screens/HomeScreen'
-import GraphsScreen from './screens/GraphsScreen'
-import ListScreen from './screens/ListScreen'
-import NewActivityScreen from './screens/NewActivityScreen'
-import ProfileScreen from './screens/ProfileScreen'
-import SignInScreen from './screens/SignInScreen'
-import SignUpScreen from './screens/SignUpScreen'
+
+import HomeScreen from './screens/HomeScreen';
+import GraphsScreen from './screens/GraphsScreen';
+import ListScreen from './screens/ListScreen';
+import NewActivityScreen from './screens/NewActivityScreen';
+import ProfileScreen from './screens/ProfileScreen';
+import SignInScreen from './screens/SignInScreen';
+import SignUpScreen from './screens/SignUpScreen';
 import CustomTabBarBackground from './components/CustomTabBarBackground';
 import user from './reducers/user';
 import activities from './reducers/activities';
@@ -21,28 +22,35 @@ const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
 const store = configureStore({
-  reducer : {user, activities},
-})
+  reducer: { user, activities },
+});
 
 const TabNavigator = () => {
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
         tabBarIcon: ({ color, size }) => {
-          let iconName = '';
-
           if (route.name === 'Home') {
-            iconName = 'bolt';
+            return (
+              <Image
+                source={require('./assets/images/logo3.png')}
+                style={{
+                  width: 100,
+                  height: 100,
+                  tintColor: color,
+                  resizeMode: 'contain',
+                  paddingTop:20,
+                }}
+              />
+            );
           } else if (route.name === 'Profile') {
-            iconName = 'user';
+            return <FontAwesome name="user" size={size} color={color} />;
           }
-
-          return <FontAwesome name={iconName} size={size} color={color} />;
         },
         tabBarActiveTintColor: '#ec6e5b',
         tabBarInactiveTintColor: '#335561',
         headerShown: false,
-        // NE  PAS mettre tabBarStyle ICI car  s'applique à tous les écrans
+      // NE  PAS mettre tabBarStyle ICI car  s'applique à tous les écrans
       })}
     >
       <Tab.Screen
@@ -53,20 +61,20 @@ const TabNavigator = () => {
             backgroundColor: '#7333a0ff',
             borderTopLeftRadius: 20,
             borderTopRightRadius: 20,
-            height: 90,
+            height: 75,
             // modifie le style de TabNav sur la page home 
           },
-          tabBarBackground: () => <CustomTabBarBackground />
+          tabBarBackground: () => <CustomTabBarBackground />,
         }}
       />
       <Tab.Screen
         name="Profile"
         component={ProfileScreen}
-        
       />
     </Tab.Navigator>
   );
 };
+
 export default function App() {
   return (
     <Provider store={store}>
