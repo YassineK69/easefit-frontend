@@ -1,9 +1,26 @@
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 export default function NewActivityScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
+      <Text>Nouvelle Activité</Text>
+      <View>
+        <Text>Titre</Text>
+        <TextInput></TextInput>
+      </View>
+      <View>
+        <Text>Sport</Text>
+        <TextInput></TextInput>
+      </View>
+      <View>
+        <Text>Durée</Text>
+        <TextInput></TextInput>
+      </View>
+      <View>
+        <Text>Date</Text>
+        <TextInput></TextInput>
+      </View>
       <TouchableOpacity onPress={() => navigation.navigate('TabNavigator', {screen : 'Home'})} style={styles.button} activeOpacity={0.8}>
         <Text style={styles.textButton}>Annuler - Go back to Home</Text>
       </TouchableOpacity>
