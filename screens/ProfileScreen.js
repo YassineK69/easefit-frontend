@@ -1,7 +1,17 @@
-import { useState } from "react";
-import { ImageBackground, Image, StyleSheet, Text, View } from "react-native";
+import { ImageBackground, Image, StyleSheet, Text, View, TextInput } from "react-native";
+import { useEffect, useState } from 'react';
 
-export default function ProfileScreen({ navigation }) {
+export default function Profile({ navigation }) {
+
+  const [user, setUser] = useState([]);
+
+  useEffect(() => {
+     fetch('http://localhost:3000/users/user/:token')
+     .then(response => response.json())
+     .then(data => {
+       setUser(data);
+     });
+ }, []);
 
   return (
     <ImageBackground
@@ -17,11 +27,11 @@ export default function ProfileScreen({ navigation }) {
           <Text style={styles.text}>UserName</Text>
         </View>
 
-      <View style={styles.ligne}>
+      {/* <View style={styles.ligne}>
         <View style={styles.line}>
           ''
         </View>
-    </View>
+    </View> */}
 
         <View style={styles.body}>
           <View style={styles.left}>
@@ -33,18 +43,18 @@ export default function ProfileScreen({ navigation }) {
         </View>
       
         <View style={styles.right}>
-          <Text style={styles.text}>Madison Malte</Text>
-          <Text style={styles.text}>19 dec 2005</Text>
-          <Text style={styles.text}>Woman</Text>
-          <Text style={styles.text}>1.50</Text>
-          <Text style={styles.text}>6</Text>
+          <TextInput>{user.firstName}</TextInput>
+          <TextInput>{user.birthday}</TextInput>
+          <TextInput>{user.gender}</TextInput>
+          <TextInput>{user.height}</TextInput>
+          <TextInput>{user.idActivities}</TextInput>
       </View>
    </View>
-      <View style={styles.ligne}>
+      {/* <View style={styles.ligne}>
         <View style={styles.line}>
           ''
         </View>
-    </View>
+    </View> */}
 </View>
     </ImageBackground>
   );
@@ -105,5 +115,4 @@ const styles = StyleSheet.create({
     paddingRight: 10,
     fontWeight: 'bold',
   },
-
-});
+})
