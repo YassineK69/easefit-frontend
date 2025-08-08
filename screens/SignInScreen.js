@@ -1,4 +1,5 @@
 import { StyleSheet, Text, TouchableOpacity, View, Image, TextInput, ImageBackground, KeyboardAvoidingView, Platform } from 'react-native';
+import {loadActivities} from '../reducers/activities';
 
 import { useState } from 'react';
 import { useDispatch} from 'react-redux';
@@ -26,7 +27,9 @@ export default function SignInScreen({ navigation }) {
       }).then(response => response.json())
 			  .then(data => {
 				if (data.result) {
+          console.log('data.activities:', data.activities);
 				  dispatch(login({ email: signInEmail, token: data.token }));
+          dispatch(loadActivities(data.activities))
 					setSignInEmail('');
 					setSignInPassword('');
           navigation.navigate('TabNavigator', {screen : 'Home'})
