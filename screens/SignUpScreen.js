@@ -53,7 +53,7 @@ export default function SignUpScreen({ navigation }) {
     };
     console.log(dataUser);
     
-    fetch("https://easefit-backend.vercel.app/users/signup", {
+    fetch( `${process.env.EXPO_PUBLIC_URL_VERCEL}/users/signup`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(dataUser),

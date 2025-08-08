@@ -32,13 +32,12 @@ export default function HomeScreen({ navigation }) {
     course: '#3b82f6',
     fitness: '#10b981',
   };
-
   // Chargement des activités dès que le token est disponible
   useEffect(() => {
     const fetchActivities = async () => {
       try {
         const response = await fetch(
-          `http://10.0.0.143:3000/activities/calendar/${token}`,
+          `${process.env.EXPO_PUBLIC_URL_VERCEL}/activities/calendar/${token}`,
           {
             method: 'GET',
             headers: { 'Content-Type': 'application/json' },
