@@ -34,7 +34,8 @@ export default function NewActivityScreen({ navigation }) {
     if (!activityTitle || !activityType || !activityDuration || !activityDate || !activityGrade) {
       return
     } else {
-        fetch(`http://10.0.0.217:3000/activities/newactivity/${token}`, {
+      
+        fetch(`${process.env.EXPO_PUBLIC_URL_VERCEL}/activities/newactivity/${token}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ title: activityTitle, type: activityType, date : activityDate, duration : activityDuration, grade : activityGrade, comment : activityComment, activitiesPic : []}),

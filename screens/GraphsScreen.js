@@ -13,7 +13,7 @@ import { useFonts } from "expo-font";
 import fontGraph from "../assets/fonts/Manrope-Regular.ttf";
 import GraphsBar from "../components/GraphsBar";
 import GraphsDonut from "../components/GraphsDonut";
-import GraphsMultiBars from "./GraphsMultiBars";
+import GraphsMultiBars from "../components/GraphsMultiBars";
 import { useSelector } from 'react-redux';
 
 
@@ -44,7 +44,7 @@ export default function GraphsScreen({ navigation }) {
   });
 
   const data = useSelector((state) => state.activities.value);
-  
+
   return (
     <LinearGradient
       colors={["#703561", "#d5341e"]}
