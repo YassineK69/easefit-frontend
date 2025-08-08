@@ -5,6 +5,9 @@ import { useState } from 'react';
 import { useDispatch} from 'react-redux';
 import { login } from '../reducers/user';
 
+
+
+
 const EMAIL_REGEX = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
 export default function SignInScreen({ navigation }) { 
@@ -20,7 +23,7 @@ export default function SignInScreen({ navigation }) {
         return 
       } 
 
-      fetch("https://easefit-backend.vercel.app/users/signin", {
+      fetch(`${process.env.EXPO_PUBLIC_URL_VERCEL}/users/signin`, {
         method: 'POST',
 			  headers: { 'Content-Type': 'application/json' },
 			  body: JSON.stringify({ email: signInEmail, password: signInPassword }),

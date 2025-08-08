@@ -70,9 +70,9 @@ function traitementDuree(data) {
   return DATA;
 }
 
-const legend = activities.map((type) => {
+const legend = activities.map((type,i) => {
   return (
-    <View style={{ flexDirection: "row", alignItems: "center" }}>
+    <View key={i} style={{ flexDirection: "row", alignItems: "center" }}>
       <FontAwesome
         name="circle"
         size={15}
@@ -97,7 +97,7 @@ export default function GraphDonut(props) {
   const comment = props.type === "number" ? " activités" : " mn";
   const results = activities.map((type, i) => {
     return (
-      <View style={{ flexDirection: "row", alignItems: "center" }}>
+      <View key={i}  style={{ flexDirection: "row", alignItems: "center" }}>
         <FontAwesome
           name="circle"
           size={15}

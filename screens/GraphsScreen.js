@@ -42,7 +42,9 @@ export default function GraphsScreen({ navigation }) {
     "Manrope-Regular": require("../assets/fonts/Manrope-Regular.ttf"),
     "Manrope-Bold": require("../assets/fonts/Manrope-Bold.ttf"),
   });
-  const friends = useSelector((state) => state.activities.value);
+
+  const data = useSelector((state) => state.activities.value);
+  
   return (
     <LinearGradient
       colors={["#703561", "#d5341e"]}
