@@ -1,8 +1,12 @@
 import { StyleSheet, Text, TouchableOpacity, View, Image, TextInput, ImageBackground, KeyboardAvoidingView, Platform } from 'react-native';
+import {loadActivities} from '../reducers/activities';
 
 import { useState } from 'react';
 import { useDispatch} from 'react-redux';
 import { login } from '../reducers/user';
+
+
+
 
 const EMAIL_REGEX = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
@@ -19,14 +23,16 @@ export default function SignInScreen({ navigation }) {
         return 
       } 
 
-      fetch("https://easefit-backend.vercel.app/users/signin", {
+      fetch(`${process.env.EXPO_PUBLIC_URL_VERCEL}/users/signin`, {
         method: 'POST',
 			  headers: { 'Content-Type': 'application/json' },
 			  body: JSON.stringify({ email: signInEmail, password: signInPassword }),
       }).then(response => response.json())
 			  .then(data => {
 				if (data.result) {
+          console.log('data.activities:', data.activities);
 				  dispatch(login({ email: signInEmail, token: data.token }));
+          dispatch(loadActivities(data.activities))
 					setSignInEmail('');
 					setSignInPassword('');
           navigation.navigate('TabNavigator', {screen : 'Home'})
