@@ -39,6 +39,7 @@ export default function SignInScreen({ navigation }) {
 				} else {
           setErrorMessage(data.error)
         }
+        
 			});
     }
 
