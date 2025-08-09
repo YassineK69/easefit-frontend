@@ -1,5 +1,5 @@
 export const appColors = {
-  course: "#f00",
-  muscu: "#0f0",
-  fitness: "#00f",
+  Course: "#f00",
+  Muscu: "#0f0",
+  Fitness: "#00f",
 };

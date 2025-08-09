@@ -12,6 +12,8 @@ import { Pie, PolarChart } from "victory-native";
 import { useFonts } from "expo-font";
 import { appColors } from "../consts/appColors";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
+import { useSelector } from 'react-redux';
+
 
 function calculateGradientPoints(
   radius,
@@ -38,12 +40,14 @@ function calculateGradientPoints(
   return { startX, startY, endX, endY };
 }
 
-const activities = ["muscu", "course", "fitness"];
+const activities = ["Muscu", "Course", "Fitness"];
 
-function traitementNombre(data) {
+function traitementNombre(dataActivities) {
   const DATA = [];
   for (let type of activities) {
-    let filtre = data.filter((obj) => obj.type === type);
+    let filtre = dataActivities.filter((obj) => obj["type"] === type);
+    console.log('filtrer dans donuts : ',type,filtre)
+
     DATA.push({
       value: filtre.length,
       color: appColors[type],
@@ -52,7 +56,7 @@ function traitementNombre(data) {
   }
   return DATA;
 }
-function traitementDuree(data) {
+function traitementDuree(data) {  
   const DATA = [];
   for (let type of activities) {
     let filtre = data.filter((obj) => obj.type === type);
@@ -85,15 +89,17 @@ const legend = activities.map((type,i) => {
 });
 
 export default function GraphDonut(props) {
+
   const [fontsLoaded] = useFonts({
     "Manrope-Regular": require("../assets/fonts/Manrope-Regular.ttf"),
     "Manrope-Bold": require("../assets/fonts/Manrope-Bold.ttf"),
   });
-
+  const dataActivities = useSelector((state) => state.activities.value);
+  console.log('dataActivities',dataActivities);
   const DATA =
     props.type === "number"
-      ? traitementNombre(props.data)
-      : traitementDuree(props.data);
+      ? traitementNombre(dataActivities)
+      : traitementDuree(dataActivities);
   const comment = props.type === "number" ? " activités" : " mn";
   const results = activities.map((type, i) => {
     return (

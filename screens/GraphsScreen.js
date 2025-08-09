@@ -17,34 +17,15 @@ import GraphsMultiBars from "../components/GraphsMultiBars";
 import { useSelector } from 'react-redux';
 
 
-//Jeu de données tests
-// function createDateRandom() {
-//   let month = Math.floor(Math.random()*12) + 1;
-//   month = month > 9 ? parseInt(month) :  '0'+parseInt(month)
-//   let day = Math.floor(Math.random()*28) + 1;
-//   day = day > 9 ? parseInt(day) :  '0'+parseInt(day)  
-//   return `2025-${month}-${day}T00:00:00.000+00:00`
-// }
-// const activities = ['muscu', 'course', 'fitness'];
-// const data = Array.from({ length: 10 }, (_, i) => ({
-//   title: `activité ${i}`,
-//   type: activities[Math.floor(Math.random() * activities.length)],
-//   date: createDateRandom(),
-//   duration: Math.trunc(180*Math.random())+1,
-//   grade: Math.trunc(5*Math.random())+1,
-// }));
-// console.log('data récupérée : ',data)
-//*********************************** */
-
-
 export default function GraphsScreen({ navigation }) {
   const [fontsLoaded] = useFonts({
     "Manrope-Regular": require("../assets/fonts/Manrope-Regular.ttf"),
     "Manrope-Bold": require("../assets/fonts/Manrope-Bold.ttf"),
   });
 
-  const data = useSelector((state) => state.activities.value);
 
+  const data = useSelector((state) => state.activities.value);
+  
   return (
     <LinearGradient
       colors={["#703561", "#d5341e"]}
@@ -83,7 +64,7 @@ export default function GraphsScreen({ navigation }) {
           </View>
         </View>
         <ScrollView style={{width:"100%"}}>
-          <GraphsDonut data = {data} type="number" />
+          <GraphsDonut  type="number" />
           <GraphsMultiBars data = {data} />
           <GraphsDonut data = {data} type="duration" />
 

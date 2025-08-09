@@ -23,7 +23,6 @@ function GraphsBar(props) {
   });
 
   function ToolTip({ x, y, s }) {
-    console.log(s);
     setValeurs(DATA[s.matchedIndex.value]);
     return <Circle cx={x} cy={y} r={8} color="black" />;
   }

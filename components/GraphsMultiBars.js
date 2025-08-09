@@ -5,13 +5,14 @@ import { Circle, useFont, vec } from "@shopify/react-native-skia";
 import { useState } from "react";
 import { LinearGradient } from "@shopify/react-native-skia";
 import { useFonts } from "expo-font";
+import { useSelector } from 'react-redux';
+
 
 const DATA = Array.from({ length: 31 }, (_, i) => ({
   day: i,
   lowTmp: 20 + 10 * Math.random(),
   highTmp: 40 + 30 * Math.random(),
 }));
-console.log(DATA);
 
 function GraphsMultiBars(props) {
   const font = useFont(inter, 12);
@@ -24,7 +25,6 @@ function GraphsMultiBars(props) {
   const { state, isActive } = useChartPressState({ x: 0, y: { highTmp: 0 } });
 
   function ToolTip({ x, y, s }) {
-    console.log(s);
     setValeurs(DATA[s.matchedIndex.value]);
 
     return <Circle cx={x} cy={y} r={8} color="black" />;
