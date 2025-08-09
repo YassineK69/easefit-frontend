@@ -14,18 +14,30 @@ import fontGraph from "../assets/fonts/Manrope-Regular.ttf";
 import GraphsBar from "../components/GraphsBar";
 import GraphsDonut from "../components/GraphsDonut";
 import GraphsMultiBars from "../components/GraphsMultiBars";
-import { useSelector } from 'react-redux';
-
+import { useSelector } from "react-redux";
+import { useState, useEffect } from "react";
+import DatePickerWithModal from "../components/SelectDate";
 
 export default function GraphsScreen({ navigation }) {
   const [fontsLoaded] = useFonts({
     "Manrope-Regular": require("../assets/fonts/Manrope-Regular.ttf"),
     "Manrope-Bold": require("../assets/fonts/Manrope-Bold.ttf"),
   });
-
+  const [start, setStart] = useState(null);
+  const [end, setEnd] = useState(null);
+  const [viewFilter, setViewFilter] = useState(false);
 
   const data = useSelector((state) => state.activities.value);
-  
+
+  const selectStart = (value) => {
+    setStart(value);
+  };
+  const selectEnd = (value) => {
+    setEnd(value);
+  };
+  const handdleFilter = () => {
+    setViewFilter(!viewFilter);
+  };
   return (
     <LinearGradient
       colors={["#703561", "#d5341e"]}
@@ -45,30 +57,69 @@ export default function GraphsScreen({ navigation }) {
               name="caret-left"
               size={50}
               color="#fff"
-              style={{ marginLeft: 20 }}
+              style={{ margin: 10 }}
             />
           </TouchableOpacity>
           <Image
             source={require("../assets/whitelogo.png")}
             style={styles.image}
           />
-          <View>
-            <TouchableOpacity onPress={() => console.log("Click sur Filtres")}>
+          <View style={{}}>
+            <TouchableOpacity onPress={handdleFilter}>
               <FontAwesome
                 name="filter"
-                size={30}
-                color="#fff"
-                style={{ marginRight: 20, marginBottom: 10 }}
+                size={35}
+                color={!viewFilter ? "#fff" : "#888"}
+                style={{ margin: 15 }}
               />
             </TouchableOpacity>
           </View>
         </View>
-        <ScrollView style={{width:"100%"}}>
-          <GraphsDonut  type="number" />
-          <GraphsMultiBars data = {data} />
-          <GraphsDonut data = {data} type="duration" />
+        {viewFilter && (
+          <View
+            style={{
+              borderColor: "#fff",
+              flexDirection: "row",
+              borderWidth: 1,
+              justifyContent: "space-between",
+              width: "100%",
+              padding: 5,
+            }}
+          >
+            <View
+              style={{
+                borderColor: "#fff",
+                flexDirection: "row",
+                borderWidth: 1,
+              }}
+            >
+              <Text style={{ padding: 10, color: "#fff" }}>Entre le :</Text>
+              <DatePickerWithModal
+                select={selectStart}
+                backgroundColor="rgba(255, 255, 255, 0.5)"
+              />
+            </View>
+            <View
+              style={{
+                borderColor: "#fff",
+                flexDirection: "row",
+                borderWidth: 1,
+              }}
+            >
+              <Text style={{ padding: 10, color: "#fff" }}>et :</Text>
+              <DatePickerWithModal
+                select={selectEnd}
+                backgroundColor="rgba(255, 255, 255, 0.5)"
+              />
+            </View>
+          </View>
+        )}
+        <ScrollView style={{ width: "100%" }}>
+          <GraphsDonut type="number" />
+          <GraphsMultiBars data={data} />
+          <GraphsDonut data={data} type="duration" />
 
-          <GraphsBar data = {data} />
+          <GraphsBar data={data} />
         </ScrollView>
       </SafeAreaView>
     </LinearGradient>

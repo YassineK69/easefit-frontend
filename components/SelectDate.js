@@ -20,24 +20,24 @@ const DatePickerWithModal = (props) => {
   };
 
   useEffect(() => {
-    props.selectBirthday(date);
+    props.select(date);
   }, [date]);
 
   const confirmIOSDate = () => setShowModal(false); // pour valider manuellement sur iOS
-
+  const backgroundColor= props.backgroundColor; 
   return (
     <View>
       <TouchableOpacity onPress={() => setShowModal(true)}>
         <TextInput
           value={date.toLocaleDateString()}
           editable={false}
-          placeholder="Birthday"
           pointerEvents="none"
           style={{
             borderWidth: 1,
             padding: 10,
             borderRadius: 5,
             borderColor: "#ccc",
+            backgroundColor:backgroundColor,
           }}
         />
       </TouchableOpacity>

@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import { useState } from "react";
 import Dropdown from "../components/gender";
-import DatePickerWithModal from "../components/birthday";
+import DatePickerWithModal from "../components/SelectDate";
 import { useDispatch } from "react-redux";
 import { login } from "../reducers/user";
 
@@ -108,7 +108,7 @@ export default function SignUpScreen({ navigation }) {
             </View>
             <View style={styles.boxInput}>
               <Text style={{ padding: 10 }}>Birthday</Text>
-              <DatePickerWithModal selectBirthday={selectBirthday} />
+              <DatePickerWithModal select={selectBirthday} backgroundColor='rgba(255, 255, 255, 0.1)'/>
             </View>
             <View style={styles.boxInput}>
               <TextInput
