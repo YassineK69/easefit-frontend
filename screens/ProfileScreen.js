@@ -1,7 +1,32 @@
-import { useState } from "react";
-import { ImageBackground, Image, StyleSheet, Text, View } from "react-native";
+import { ImageBackground, Image, StyleSheet, Text, View, TextInput } from "react-native";
+import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 
-export default function ProfileScreen({ navigation }) {
+export default function Profile({ navigation }) {
+
+  const [userInfos, setUserInfos] = useState({});
+  console.log(userInfos)
+  const user = useSelector((state) => state.user.value)
+  
+  useEffect(() => {
+     fetch(`${process.env.EXPO_PUBLIC_URL_VERCEL}/users/${user.token}`)
+     .then(response => response.json())
+     .then(data => {
+
+      const Birthday = new Date(data.birthday)
+      const date = Birthday.toLocaleDateString("fr")
+
+      const dateInfo = {
+      firstName: data.firstName,
+      birthday: date,
+      gender: data.gender,
+      height: data.height,
+      idActivities: data.idActivities,
+    };
+
+       setUserInfos(dateInfo);
+     });
+ }, []);
 
   return (
     <ImageBackground
@@ -14,37 +39,26 @@ export default function ProfileScreen({ navigation }) {
             source={require("../assets/avatar.jpg")}
             style={{ width: 120, height: 120 }}
           />
-          <Text style={styles.text}>UserName</Text>
+          <Text style={styles.text}>{userInfos.firstName}</Text>
         </View>
-
-      <View style={styles.ligne}>
-        <View style={styles.line}>
-          ''
-        </View>
-    </View>
 
         <View style={styles.body}>
           <View style={styles.left}>
-          <Text style={styles.text}>Name</Text>
-          <Text style={styles.text}>Birth</Text>
-          <Text style={styles.text}>Type</Text>
-          <Text style={styles.text}>height</Text>
-          <Text style={styles.text}>activity</Text>
+          <Text style={styles.text}>Nom :</Text>
+          <Text style={styles.text}>Birthday :</Text>
+          <Text style={styles.text}>Genre :</Text>
+          <Text style={styles.text}>Taille :</Text>
+          <Text style={styles.text}>Activité :</Text>
         </View>
       
         <View style={styles.right}>
-          <Text style={styles.text}>Madison Malte</Text>
-          <Text style={styles.text}>19 dec 2005</Text>
-          <Text style={styles.text}>Woman</Text>
-          <Text style={styles.text}>1.50</Text>
-          <Text style={styles.text}>6</Text>
+          <Text style={styles.textA}>{userInfos.firstName}</Text>
+          <Text style={styles.textA}>{userInfos.birthday}</Text>
+          <Text style={styles.textA}>{userInfos.gender}</Text>
+          <Text style={styles.textA}>{userInfos.height}</Text>
+          <Text style={styles.textA}>{userInfos.idActivities}</Text>
       </View>
    </View>
-      <View style={styles.ligne}>
-        <View style={styles.line}>
-          ''
-        </View>
-    </View>
 </View>
     </ImageBackground>
   );
@@ -54,12 +68,12 @@ const styles = StyleSheet.create({
 
   imageBackground: {
     height: "100%",
-    width: "100%",
+    width: "100%", 
   },
 
   container: {
     flex: 1,
-    width: '100%',
+    width: '150%',
   },
 
   header: {
@@ -67,34 +81,29 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingTop: 50,
     paddingBottom: 20,
+    paddingRight: 190,
+    borderBottomWidth: 2,
+    borderBottomColor: "white"
   },
 
   body: {
     flexDirection: "row",
     alignItems:'center',
     justifyContent:'center',
+    borderBottomWidth: 2,
+    borderBottomColor: "white",
+    paddingBottom: 25
   },
 
   left: {
    paddingTop: 10,
    paddingBottom: 10,
-   paddingRight: 20,
   }, 
 
   right: {
    paddingTop: 10,
    paddingBottom: 10,
-   paddingLeft: 20,
-  },
-
-  ligne: {
-    paddingBottom:15,
-    paddingTop: 20,
-  },
-
-  line:{
-    borderWidth:2,
-    borderColor: "white",
+   paddingRight: 150
   },
 
   text: {
@@ -102,8 +111,16 @@ const styles = StyleSheet.create({
     color: "#FFF",
     paddingTop: 40,
     paddingLeft: 10,
-    paddingRight: 10,
+    paddingRight: 15,
     fontWeight: 'bold',
   },
 
-});
+  textA: {
+    fontSize: 25,
+    color: "#FFF",
+    paddingTop: 40,
+    paddingLeft: 15,
+    paddingRight: 10,
+    fontWeight: 'bold',
+  }
+})

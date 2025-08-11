@@ -1,4 +1,10 @@
-import {
+//
+    function formatBirthday(inputDate) {
+    const dateObj = new Date(inputDate);
+    return dateObj.toISOString().slice(0, 10);
+    }
+    
+  import {
   StyleSheet,
   Text,
   TouchableOpacity,
