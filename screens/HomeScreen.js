@@ -19,6 +19,7 @@ export default function HomeScreen({ navigation }) {
   // Récupération du token et prénom depuis Redux
   const token = useSelector((state) => state.user.value.token);
   const firstName = useSelector((state) => state.user.value.firstName);
+  console.log(firstName)
 
   // États pour gérer les données du calendrier et la modal
   const [markedDates, setMarkedDates] = useState({});
@@ -116,7 +117,7 @@ export default function HomeScreen({ navigation }) {
       {/* --- EN-TÊTE --- */}
       <View style={styles.header}>
         <View>
-          <Text style={styles.greeting}>Hello {firstName || '!'}</Text>
+          <Text style={styles.greeting}>Hello {firstName || "!"}</Text>
           <Text style={styles.subTitle}>Vos activités</Text>
         </View>
         {/* Bouton + pour ajouter une activité */}

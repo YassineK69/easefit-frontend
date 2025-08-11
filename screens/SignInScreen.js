@@ -27,6 +27,7 @@ export default function SignInScreen({ navigation }) {
       .then(data => {
         if (data.result) {
           console.log('data.activities:', data.activities);
+          console.log('data', data);
 
           // Stocke le firstName en plus
           dispatch(login({ 
@@ -73,7 +74,7 @@ export default function SignInScreen({ navigation }) {
             style={styles.inputbox} 
             onChangeText={setSignInPassword} 
             value={signInPassword} 
-            secureTextEntry
+            secureTextEntry // securisation du mdp (masquage du mdp)
             autoCapitalize="none" 
           />
         </View>
