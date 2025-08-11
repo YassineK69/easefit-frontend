@@ -1,71 +1,98 @@
 import { StyleSheet, Text, TouchableOpacity, View, Image, TextInput, ImageBackground, KeyboardAvoidingView, Platform } from 'react-native';
-import {loadActivities} from '../reducers/activities';
-
+import { loadActivities } from '../reducers/activities';
 import { useState } from 'react';
-import { useDispatch} from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { login } from '../reducers/user';
-
-
-
 
 const EMAIL_REGEX = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
 export default function SignInScreen({ navigation }) { 
+  const [signInEmail, setSignInEmail] = useState('');
+  const [signInPassword, setSignInPassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+  const dispatch = useDispatch();
 
-  	const [signInEmail, setSignInEmail] = useState('');
-	  const [signInPassword, setSignInPassword] = useState('');
-    const [errorMessage, setErrorMessage] = useState('');
-    const dispatch = useDispatch();
+  const goToHome = () => {
+    if (!EMAIL_REGEX.test(signInEmail)) {
+      setErrorMessage('Format email incorrect');
+      return;
+    } 
 
-    const goToHome = () => {
-      if (!EMAIL_REGEX.test(signInEmail)){
-        setErrorMessage('Format email incorrect')
-        return 
-      } 
-
-      fetch(`${process.env.EXPO_PUBLIC_URL_VERCEL}/users/signin`, {
-        method: 'POST',
-			  headers: { 'Content-Type': 'application/json' },
-			  body: JSON.stringify({ email: signInEmail, password: signInPassword }),
-      }).then(response => response.json())
-			  .then(data => {
-				if (data.result) {
+    fetch(`${process.env.EXPO_PUBLIC_URL_VERCEL}/users/signin`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: signInEmail, password: signInPassword }),
+    })
+      .then(response => response.json())
+      .then(data => {
+        if (data.result) {
           console.log('data.activities:', data.activities);
-				  dispatch(login({ email: signInEmail, token: data.token }));
-          dispatch(loadActivities(data.activities))
-					setSignInEmail('');
-					setSignInPassword('');
-          navigation.navigate('TabNavigator', {screen : 'Home'})
-				} else {
-          setErrorMessage(data.error)
-        }
-			});
-    }
+          console.log('data', data);
 
-    return (
-      <ImageBackground source={require('../assets/fond2.png')} style={styles.background}>
-        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.container}>
-          <Image style={styles.image} source={require('../assets/whitelogo.png')} />
-          <Text style={styles.h1}>EASEFIT</Text>
-          <View style={styles.input}>
-                <TextInput placeholder ='Email' placeholderTextColor="rgba(255,255,255,0.5)" style={styles.inputbox} onChangeText={setSignInEmail} value={signInEmail} autoCapitalize="none" keyboardType="email-address" textContentType="emailAddress" autoComplete="email"></TextInput>
-                <TextInput placeholder ='Mot de passe' placeholderTextColor="rgba(255,255,255,0.5)" style={styles.inputbox} onChangeText={setSignInPassword} value={signInPassword} autoCapitalize="none"></TextInput>
-          </View>
-          {errorMessage !== '' && <Text style={{ color: 'red', textAlign: 'center', marginVertical: 10 }}>{errorMessage}</Text>}
-          <TouchableOpacity onPress={() => goToHome()} style={styles.buttonToHome} activeOpacity={0.8}>
-              <Text style={styles.textToHome}>Se connecter</Text>
-          </TouchableOpacity>
-          <View style={styles.goSignUp}>
-                <Text style={styles.textSignUp}>Vous n'avez pas de compte ?</Text>
-                <Text onPress={() => navigation.navigate('SignUp')} style={styles.textSignUpLink}> Inscrivez-vous</Text>
-          </View>
-          <View style={{height: 1, backgroundColor: 'gray', width: '100%', marginVertical: 10 }} />
-          <View >
-              <Text style={styles.sso} >SSO A VOIR APRES</Text>
-          </View>
-        </KeyboardAvoidingView>
-      </ImageBackground>
-    )
+          // Stocke le firstName en plus
+          dispatch(login({ 
+            email: signInEmail, 
+            token: data.token,
+            firstName: data.firstName || '', 
+          }));
+
+          dispatch(loadActivities(data.activities));
+
+          setSignInEmail('');
+          setSignInPassword('');
+          navigation.navigate('TabNavigator', { screen: 'Home' });
+        } else {
+          setErrorMessage(data.error);
+        }
+      })
+      .catch(err => {
+        console.error('Erreur connexion:', err);
+        setErrorMessage('Erreur de connexion');
+      });
+  };
+
+  return (
+    <ImageBackground source={require('../assets/fond2.png')} style={styles.background}>
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.container}>
+        <Image style={styles.image} source={require('../assets/whitelogo.png')} />
+        <Text style={styles.h1}>EASEFIT</Text>
+        <View style={styles.input}>
+          <TextInput 
+            placeholder='Email' 
+            placeholderTextColor="rgba(255,255,255,0.5)" 
+            style={styles.inputbox} 
+            onChangeText={setSignInEmail} 
+            value={signInEmail} 
+            autoCapitalize="none" 
+            keyboardType="email-address" 
+            textContentType="emailAddress" 
+            autoComplete="email" 
+          />
+          <TextInput 
+            placeholder='Mot de passe' 
+            placeholderTextColor="rgba(255,255,255,0.5)" 
+            style={styles.inputbox} 
+            onChangeText={setSignInPassword} 
+            value={signInPassword} 
+            secureTextEntry // securisation du mdp (masquage du mdp)
+            autoCapitalize="none" 
+          />
+        </View>
+        {errorMessage !== '' && <Text style={{ color: 'red', textAlign: 'center', marginVertical: 10 }}>{errorMessage}</Text>}
+        <TouchableOpacity onPress={goToHome} style={styles.buttonToHome} activeOpacity={0.8}>
+          <Text style={styles.textToHome}>Se connecter</Text>
+        </TouchableOpacity>
+        <View style={styles.goSignUp}>
+          <Text style={styles.textSignUp}>Vous n'avez pas de compte ?</Text>
+          <Text onPress={() => navigation.navigate('SignUp')} style={styles.textSignUpLink}> Inscrivez-vous</Text>
+        </View>
+        <View style={{height: 1, backgroundColor: 'gray', width: '100%', marginVertical: 10 }} />
+        <View>
+          <Text style={styles.sso}>SSO A VOIR APRES</Text>
+        </View>
+      </KeyboardAvoidingView>
+    </ImageBackground>
+  );
 }
 
 const styles = StyleSheet.create({        
@@ -86,7 +113,7 @@ const styles = StyleSheet.create({
   }, 
   h1 :{
     fontSize : 50,
-    fontWeight : 600,
+    fontWeight : '600',
     fontFamily: 'Manrope_700Bold',
     color : '#ffffff',
     textAlign : 'center',
@@ -107,7 +134,7 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 20,
     fontFamily: 'Manrope_600Regular',
-    fontWeight : 600,
+    fontWeight : '600',
     marginBottom: 25,
     opacity: 0.9,
     textAlignVertical: 'center', 
@@ -126,7 +153,7 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 20,
     fontFamily: 'Manrope_700Bold',
-    fontWeight : 600,
+    fontWeight : '600',
   },
   goSignUp: {
     flexDirection: 'row',
@@ -136,6 +163,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Manrope_400Regular',
     marginBottom : 10,
   },
+  //
   textSignUp:{
     color: 'white', 
     fontSize : 12,

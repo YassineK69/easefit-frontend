@@ -19,6 +19,7 @@ export default function HomeScreen({ navigation }) {
   // Récupération du token et prénom depuis Redux
   const token = useSelector((state) => state.user.value.token);
   const firstName = useSelector((state) => state.user.value.firstName);
+  console.log(firstName)
 
   // États pour gérer les données du calendrier et la modal
   const [markedDates, setMarkedDates] = useState({});
@@ -28,10 +29,11 @@ export default function HomeScreen({ navigation }) {
 
   // Couleurs associées aux types de sport
   const sportColors = {
-    muscu: '#b30bf5',
-    course: '#3b82f6',
-    fitness: '#10b981',
+    Muscu: '#b30bf5',
+    Course: '#3b82f6',
+    Fitness: '#10b981',
   };
+
   // Chargement des activités dès que le token est disponible
   useEffect(() => {
     const fetchActivities = async () => {
@@ -48,8 +50,6 @@ export default function HomeScreen({ navigation }) {
 
         const data = await response.json();
 
-        console.log('Données reçues de l’API :', data);
-
         if (data && data.activities) {
           const newMarkedDates = {};
 
@@ -57,34 +57,32 @@ export default function HomeScreen({ navigation }) {
           newMarkedDates[today] = {
             selected: true,
             selectedColor: '#5e2a84',
-            dots: [],
           };
 
           // Formater les données pour ne garder que ce qui est nécessaire
-          const formattedActivities = data.activities.map((act, index) => {
+          const formattedActivities = data.activities.map((act) => {
             const formattedDate = act.date.split('T')[0];
 
-            // Gestion des points colorés dans le calendrier
+            // Couleur en fonction du type, gris si inconnu
+            const dotColor = sportColors[act.type] || '#999999';
+
+            // Ajouter une seule pastille par date (la première rencontrée)
             if (!newMarkedDates[formattedDate]) {
-              newMarkedDates[formattedDate] = { dots: [] };
+              newMarkedDates[formattedDate] = {
+                marked: true,
+                dotColor,
+              };
             }
-            newMarkedDates[formattedDate].dots.push({
-              key: `${act.type}-${index}`,
-              color: sportColors[act.type] || '#999999',
-              selectedDotColor: sportColors[act.type] || '#999999',
-            });
 
             // Retourner uniquement les infos utiles pour la modal
             return {
               date: formattedDate,
               title: act.title || 'Sans titre',
               duration: act.duration || 0,
-              rating: act.grade || 0,         // note stockée dans grade dans ta BDD
-              description: act.comment || 'Pas de description',  // commentaire stocké dans comment
+              rating: act.grade || 0,
+              description: act.comment || 'Pas de description',
             };
           });
-
-          console.log('Activités formatées :', formattedActivities);
 
           setMarkedDates(newMarkedDates);
           setAllActivities(formattedActivities);
@@ -102,16 +100,13 @@ export default function HomeScreen({ navigation }) {
   // Gestion du clic sur une date → ouverture de la modal avec les infos formatées
   const handleDayPress = (day) => {
     const clickedDate = day.dateString;
-    console.log('Date pressée:', clickedDate);
 
     const activity = allActivities.find((act) => act.date === clickedDate);
-    console.log('Activité trouvée:', activity);
 
     if (activity) {
       setSelectedActivity(activity);
       setModalVisible(true);
     } else {
-      // Si aucune activité ce jour-là, on ferme la modal
       setSelectedActivity(null);
       setModalVisible(false);
     }
@@ -122,7 +117,7 @@ export default function HomeScreen({ navigation }) {
       {/* --- EN-TÊTE --- */}
       <View style={styles.header}>
         <View>
-          <Text style={styles.greeting}>Hello {firstName || 'Prénom'}</Text>
+          <Text style={styles.greeting}>Hello {firstName || "!"}</Text>
           <Text style={styles.subTitle}>Vos activités</Text>
         </View>
         {/* Bouton + pour ajouter une activité */}
@@ -147,7 +142,7 @@ export default function HomeScreen({ navigation }) {
       <View style={styles.calendarSection}>
         <Calendar
           current={today}
-          markingType={'multi-dot'}
+          markingType={'simple'}
           markedDates={markedDates}
           onDayPress={handleDayPress}
           theme={{
@@ -202,7 +197,7 @@ export default function HomeScreen({ navigation }) {
 
             {/* Image de fond + minutes + étoiles */}
             <ImageBackground
-              source={require('../assets/fond3.jpg')} 
+              source={require('../assets/art-8504670_1280.png')}
               style={styles.modalImageBackground}
               imageStyle={{ borderTopLeftRadius: 0, borderTopRightRadius: 0 }}
             >
