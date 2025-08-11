@@ -30,13 +30,15 @@ export default function GraphsScreen({ navigation }) {
   const data = useSelector((state) => state.activities.value);
 
   const selectStart = (value) => {
-    setStart(value);
+    setStart(value.toLocaleDateString());
   };
   const selectEnd = (value) => {
-    setEnd(value);
+    setEnd(value.toLocaleDateString());
   };
   const handdleFilter = () => {
     setViewFilter(!viewFilter);
+    viewFilter && setStart(null);
+    viewFilter && setEnd(null);
   };
   return (
     <LinearGradient
@@ -114,10 +116,10 @@ export default function GraphsScreen({ navigation }) {
             </View>
           </View>
         )}
+
         <ScrollView style={{ width: "100%" }}>
-          <GraphsDonut type="number" />
+          <GraphsDonut start={start} end={end} />
           <GraphsMultiBars data={data} />
-          <GraphsDonut data={data} type="duration" />
 
           <GraphsBar data={data} />
         </ScrollView>

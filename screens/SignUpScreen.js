@@ -51,7 +51,6 @@ export default function SignUpScreen({ navigation }) {
       birthday: birthday,
       height: height,
     };
-    console.log(dataUser);
     
     fetch( `${process.env.EXPO_PUBLIC_URL_VERCEL}/users/signup`, {
       method: "POST",

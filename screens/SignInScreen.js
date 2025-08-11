@@ -30,7 +30,6 @@ export default function SignInScreen({ navigation }) {
       }).then(response => response.json())
 			  .then(data => {
 				if (data.result) {
-          console.log('data.activities:', data.activities);
 				  dispatch(login({ email: signInEmail, token: data.token }));
           dispatch(loadActivities(data.activities))
 					setSignInEmail('');

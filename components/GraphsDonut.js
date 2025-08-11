@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   SafeAreaView,
   ScrollView,
   StyleSheet,
   View,
   Button,
+  TouchableOpacity,
   Text,
 } from "react-native";
 import { LinearGradient, vec } from "@shopify/react-native-skia";
@@ -12,8 +13,8 @@ import { Pie, PolarChart } from "victory-native";
 import { useFonts } from "expo-font";
 import { appColors } from "../consts/appColors";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
-import { useSelector } from 'react-redux';
-
+import { useSelector } from "react-redux";
+import compareDate from "./compareDate";
 
 function calculateGradientPoints(
   radius,
@@ -40,13 +41,18 @@ function calculateGradientPoints(
   return { startX, startY, endX, endY };
 }
 
-const activities = ["Muscu", "Course", "Fitness"];
+function minutesToHoursMinutes(totalMinutes) {
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
+  return `${hours}h${minutes.toString().padStart(2, "0")}`;
+}
 
-function traitementNombre(dataActivities) {
+function traitementNombre(dataActivities, start, end) {
   const DATA = [];
   for (let type of activities) {
-    let filtre = dataActivities.filter((obj) => obj["type"] === type);
-    console.log('filtrer dans donuts : ',type,filtre)
+    let filtre = dataActivities.filter((obj) => {
+      return obj["type"] === type && compareDate(obj["date"], start, end);
+    });
 
     DATA.push({
       value: filtre.length,
@@ -56,10 +62,12 @@ function traitementNombre(dataActivities) {
   }
   return DATA;
 }
-function traitementDuree(data) {  
+function traitementDuree(dataActivities, start, end) {
   const DATA = [];
   for (let type of activities) {
-    let filtre = data.filter((obj) => obj.type === type);
+    let filtre = dataActivities.filter(
+      (obj) => obj.type === type && compareDate(obj["date"], start, end)
+    );
     const initialValue = 0;
     const sumDuration = filtre.reduce(
       (accumulator, currentValue) => accumulator + currentValue.duration,
@@ -74,54 +82,59 @@ function traitementDuree(data) {
   return DATA;
 }
 
-const legend = activities.map((type,i) => {
-  return (
-    <View key={i} style={{ flexDirection: "row", alignItems: "center" }}>
-      <FontAwesome
-        name="circle"
-        size={15}
-        color={appColors[type]}
-        style={{ marginLeft: 0 }}
-      />
-      <Text> : {type}</Text>
-    </View>
-  );
-});
+const activities = Object.keys(appColors);
 
+//***************************************** */
 export default function GraphDonut(props) {
+  const [selectDonut, setSelectDonut] = useState(true);
+  const [selectActivity, setSelectActivity] = useState(0);
+
+  const dataActivities = useSelector((state) => state.activities.value);
 
   const [fontsLoaded] = useFonts({
     "Manrope-Regular": require("../assets/fonts/Manrope-Regular.ttf"),
     "Manrope-Bold": require("../assets/fonts/Manrope-Bold.ttf"),
   });
-  const dataActivities = useSelector((state) => state.activities.value);
-  console.log('dataActivities',dataActivities);
-  const DATA =
-    props.type === "number"
-      ? traitementNombre(dataActivities)
-      : traitementDuree(dataActivities);
-  const comment = props.type === "number" ? " activités" : " mn";
-  const results = activities.map((type, i) => {
+
+  const dataNombre = traitementNombre(dataActivities, props.start, props.end);
+  const dataDuree = traitementDuree(dataActivities, props.start, props.end);
+
+  const DATA = selectDonut ? dataNombre : dataDuree;
+  let result;
+  if (selectDonut) {
+    result = `${DATA[selectActivity]["value"]} activités `;
+  } else {
+    result = `${minutesToHoursMinutes(DATA[selectActivity]["value"])} de `;
+  }
+
+  const legend = activities.map((type, i) => {
     return (
-      <View key={i}  style={{ flexDirection: "row", alignItems: "center" }}>
+      <TouchableOpacity
+        key={i}
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          marginTop: 4,
+          justifyContent: "center",
+          padding: 8,
+        }}
+        onPress={() => setSelectActivity(i)}
+      >
         <FontAwesome
           name="circle"
-          size={15}
+          size={20}
           color={appColors[type]}
           style={{ marginLeft: 0 }}
         />
-        <Text>
-          {" "}
-          : {DATA[i]["value"]} {comment}{" "}
-        </Text>
-      </View>
+        <Text> : {type}</Text>
+      </TouchableOpacity>
     );
   });
 
   return (
     <View
       style={{
-        height: 300,
+        height: 400,
         width: "95%",
         borderWidth: 1,
         margin: "auto",
@@ -131,18 +144,37 @@ export default function GraphDonut(props) {
       }}
     >
       <View style={{ margin: 10, borderWidth: 1, borderColor: "#000" }}>
-        <Text
+        <View
           style={{
-            margin: "auto",
-            width: "min-content",
-            borderWidth: 1,
-            borderColor: "#000",
+            flexDirection: "row",
+            justifyContent: "space-around",
+            width: "100%",
           }}
         >
-          {props.type === "number"
-            ? "Nombre total d'activités"
-            : "Durée totale des activités"}
-        </Text>
+          <TouchableOpacity
+            style={[
+              styles.selectDonut,
+              selectDonut
+                ? { backgroundColor: "rgba(112, 53, 97, 0.8)" }
+                : { backgroundColor: "rgba(112, 53, 97, 0.2)" },
+            ]}
+            onPress={() => setSelectDonut(true)}
+          >
+            <Text style={{ margin: "auto", color: "#fff" }}>NOMBRE</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[
+              styles.selectDonut,
+              !selectDonut
+                ? { backgroundColor: "rgba(112, 53, 97, 0.8)" }
+                : { backgroundColor: "rgba(112, 53, 97, 0.2)" },
+            ]}
+            onPress={() => setSelectDonut(false)}
+          >
+            <Text style={{ margin: "auto", color: "#fff" }}>DUREE</Text>
+          </TouchableOpacity>
+        </View>
         <View
           style={{
             flexDirection: "row",
@@ -199,32 +231,30 @@ export default function GraphDonut(props) {
           }}
         </Pie.Chart>
       </PolarChart>
-      <View
+
+      <Text
         style={{
           margin: 10,
           borderWidth: 1,
           borderColor: "#000",
-          flexDirection: "row",
-          justifyContent: "space-around",
-          alignItems: "center",
+          margin: "auto",
+          fontSize: 20,
         }}
       >
-        {results}
-      </View>
+        {result}
+        <Text style={{ color: appColors[activities[selectActivity]] }}>
+          {activities[selectActivity].toUpperCase()}
+        </Text>
+      </Text>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  safeView: {
-    flex: 1,
-    backgroundColor: "white",
-    $dark: {
-      backgroundColor: "white",
-    },
-  },
-  chartContainer: {
-    height: 400,
-    padding: 25,
+  selectDonut: {
+    width: "45%",
+    padding: 3,
+    margin: 2,
+    borderRadius: 8,
   },
 });

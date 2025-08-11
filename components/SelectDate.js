@@ -25,6 +25,7 @@ const DatePickerWithModal = (props) => {
 
   const confirmIOSDate = () => setShowModal(false); // pour valider manuellement sur iOS
   const backgroundColor= props.backgroundColor; 
+  
   return (
     <View>
       <TouchableOpacity onPress={() => setShowModal(true)}>

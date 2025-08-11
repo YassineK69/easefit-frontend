@@ -48,7 +48,6 @@ export default function HomeScreen({ navigation }) {
 
         const data = await response.json();
 
-        console.log('Données reçues de l’API :', data);
 
         if (data && data.activities) {
           const newMarkedDates = {};
@@ -84,7 +83,6 @@ export default function HomeScreen({ navigation }) {
             };
           });
 
-          console.log('Activités formatées :', formattedActivities);
 
           setMarkedDates(newMarkedDates);
           setAllActivities(formattedActivities);
@@ -102,10 +100,8 @@ export default function HomeScreen({ navigation }) {
   // Gestion du clic sur une date → ouverture de la modal avec les infos formatées
   const handleDayPress = (day) => {
     const clickedDate = day.dateString;
-    console.log('Date pressée:', clickedDate);
 
     const activity = allActivities.find((act) => act.date === clickedDate);
-    console.log('Activité trouvée:', activity);
 
     if (activity) {
       setSelectedActivity(activity);
