@@ -19,7 +19,6 @@ export default function HomeScreen({ navigation }) {
   // Récupération du token et prénom depuis Redux
   const token = useSelector((state) => state.user.value.token);
   const firstName = useSelector((state) => state.user.value.firstName);
-  console.log(firstName)
 
   // États pour gérer les données du calendrier et la modal
   const [markedDates, setMarkedDates] = useState({});
@@ -188,19 +187,18 @@ export default function HomeScreen({ navigation }) {
         <View style={styles.modalOverlay}>
           <View style={styles.modalContainer}>
 
-            {/* --- Titre tout en haut --- */}
-            <View style={styles.modalHeader}>
-              <Text style={styles.modalHeaderTitle}>
-                {selectedActivity?.title?.toUpperCase()}
-              </Text>
-            </View>
-
-            {/* Image de fond + minutes + étoiles */}
+            {/* Image de fond + titre + minutes + étoiles */}
             <ImageBackground
-              source={require('../assets/art-8504670_1280.png')}
+              source={require('../assets/fondnewactivity.jpg')}
               style={styles.modalImageBackground}
               imageStyle={{ borderTopLeftRadius: 0, borderTopRightRadius: 0 }}
             >
+              <View style={styles.modalHeader}>
+                  <Text style={styles.modalHeaderTitle}>
+                    {selectedActivity?.title?.toUpperCase()}
+                  </Text>
+              </View>
+
               <View style={styles.modalTopRow}>
                 {/* Minutes */}
                 <Text style={styles.modalDuration}>
@@ -306,15 +304,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   modalContainer: {
-    width: '90%',
+    width: '95%',
     backgroundColor: '#fff',
-    borderRadius: 12,
+    borderRadius: 25,
     overflow: 'hidden',
   },
   modalHeader: {
-    backgroundColor: '#5e2a84',
-    paddingVertical: 15,
-    paddingHorizontal: 20,
+    paddingVertical: 30,
+    alignItems : 'center',
   },
   modalHeaderTitle: {
     fontSize: 20,
@@ -322,8 +319,7 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   modalImageBackground: {
-    height: 120,
-    justifyContent: 'space-between',
+    height: 150,
     paddingHorizontal: 20,
     paddingVertical: 15,
   },
