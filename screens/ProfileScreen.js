@@ -1,40 +1,39 @@
-import { ImageBackground, Image, StyleSheet, Text, View, TextInput } from "react-native";
-import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { StyleSheet, Text, View, Image, ImageBackground, KeyboardAvoidingView } from "react-native";
+import { useSelector } from "react-redux";
+import FontAwesome from "react-native-vector-icons/FontAwesome";
+import { useEffect, useState } from "react";
 
 export default function Profile({ navigation }) {
-
   const [userInfos, setUserInfos] = useState({});
-  console.log(userInfos)
-  const user = useSelector((state) => state.user.value)
-  
+  const user = useSelector((state) => state.user.value);
+
   useEffect(() => {
-     fetch(`${process.env.EXPO_PUBLIC_URL_VERCEL}/users/${user.token}`)
-     .then(response => response.json())
-     .then(data => {
+    fetch(`${process.env.EXPO_PUBLIC_URL_VERCEL}/users/${user.token}`)
+      .then((response) => response.json())
+      .then((data) => {
+        const Birthday = new Date(data.birthday);
+        const date = Birthday.toLocaleDateString("fr");
 
-      const Birthday = new Date(data.birthday)
-      const date = Birthday.toLocaleDateString("fr")
+        const dateInfo = {
+          firstName: data.firstName,
+          birthday: date,
+          gender: data.gender,
+          height: data.height,
+          idActivities: data.idActivities,
+        };
 
-      const dateInfo = {
-      firstName: data.firstName,
-      birthday: date,
-      gender: data.gender,
-      height: data.height,
-      idActivities: data.idActivities,
-    };
-
-       setUserInfos(dateInfo);
-     });
- }, []);
+        setUserInfos(dateInfo);
+      });
+  }, []);
 
   return (
     <ImageBackground
       source={require("../assets/fond3.jpg")}
       style={styles.imageBackground}
     >
-      <View style={styles.container}>
+      <KeyboardAvoidingView style={styles.container}>
         <View style={styles.header}>
+          <FontAwesome name="pencil" size={25} color="white" style={styles.filtre}/>
           <Image
             source={require("../assets/avatar.jpg")}
             style={{ width: 120, height: 120 }}
@@ -43,37 +42,41 @@ export default function Profile({ navigation }) {
         </View>
 
         <View style={styles.body}>
-          <View style={styles.left}>
-          <Text style={styles.text}>Nom :</Text>
-          <Text style={styles.text}>Birthday :</Text>
-          <Text style={styles.text}>Genre :</Text>
-          <Text style={styles.text}>Taille :</Text>
-          <Text style={styles.text}>Activité :</Text>
+          <View style={styles.contentBody}>
+            <Text style={styles.text}>Nom :</Text>
+            <Text style={styles.textA}>{userInfos.firstName}</Text>
+          </View>
+          <View style={styles.contentBody}>
+            <Text style={styles.text}>Birthday :</Text>
+            <Text style={styles.textA}>{userInfos.birthday}</Text>
+          </View>
+          <View style={styles.contentBody}>
+            <Text style={styles.text}>Genre :</Text>
+            <Text style={styles.textA}>{userInfos.gender}</Text>
+          </View>
+          <View style={styles.contentBody}>
+            <Text style={styles.text}>Taille :</Text>
+            <Text style={styles.textA}>{userInfos.height}</Text>
+          </View>
+          <View style={styles.contentBody}>
+            <Text style={styles.text}>Activités :</Text>
+            <Text style={styles.textA}>{userInfos.idActivities}</Text>
+          </View>
         </View>
-      
-        <View style={styles.right}>
-          <Text style={styles.textA}>{userInfos.firstName}</Text>
-          <Text style={styles.textA}>{userInfos.birthday}</Text>
-          <Text style={styles.textA}>{userInfos.gender}</Text>
-          <Text style={styles.textA}>{userInfos.height}</Text>
-          <Text style={styles.textA}>{userInfos.idActivities}</Text>
-      </View>
-   </View>
-</View>
+      </KeyboardAvoidingView>
     </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
-
   imageBackground: {
     height: "100%",
-    width: "100%", 
+    width: "100%",
   },
 
   container: {
     flex: 1,
-    width: '150%',
+    width: "100%",
   },
 
   header: {
@@ -81,46 +84,48 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingTop: 50,
     paddingBottom: 20,
-    paddingRight: 190,
     borderBottomWidth: 2,
-    borderBottomColor: "white"
+    borderBottomColor: "white",
   },
 
   body: {
-    flexDirection: "row",
-    alignItems:'center',
-    justifyContent:'center',
+    alignItems: "center",
+    justifyContent: "center",
     borderBottomWidth: 2,
     borderBottomColor: "white",
-    paddingBottom: 25
-  },
-
-  left: {
-   paddingTop: 10,
-   paddingBottom: 10,
-  }, 
-
-  right: {
-   paddingTop: 10,
-   paddingBottom: 10,
-   paddingRight: 150
+    paddingBottom: 25,
+    margin: 20,
   },
 
   text: {
     fontSize: 25,
     color: "#FFF",
-    paddingTop: 40,
-    paddingLeft: 10,
-    paddingRight: 15,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
 
   textA: {
     fontSize: 25,
-    color: "#FFF",
-    paddingTop: 40,
-    paddingLeft: 15,
-    paddingRight: 10,
-    fontWeight: 'bold',
-  }
-})
+    color: "#ffffffff",
+    width:'60%',
+    fontWeight: "bold",
+    padding: 10,
+    borderWidth: 1,
+    borderRadius: 10,
+    backgroundColor: "rgba(255, 255, 255, 0.4)",
+    borderColor: "#8c8c8cff",
+    overflow: "hidden",
+  },
+
+  contentBody  : {
+    flexDirection:'row',
+    justifyContent:'space-between', 
+    width:'100%',
+    alignItems:'center',
+    margin: 15,
+  },
+
+  filtre: {
+    paddingLeft: 300,
+    fontSize: 30,
+  },
+});
