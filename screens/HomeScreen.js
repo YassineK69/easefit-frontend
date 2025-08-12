@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import {
   View,
@@ -11,30 +12,20 @@ import {
 } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 import { useSelector } from 'react-redux';
-
 export default function HomeScreen({ navigation }) {
-  // Date du jour au format YYYY-MM-DD
   const today = new Date().toISOString().split('T')[0];
-
-  // Récupération du token et prénom depuis Redux
   const token = useSelector((state) => state.user.value.token);
   const firstName = useSelector((state) => state.user.value.firstName);
-  console.log(firstName)
-
-  // États pour gérer les données du calendrier et la modal
+  const allActivitiesRedux = useSelector((state) => state.activities.value);
   const [markedDates, setMarkedDates] = useState({});
   const [allActivities, setAllActivities] = useState([]);
   const [selectedActivity, setSelectedActivity] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
-
-  // Couleurs associées aux types de sport
   const sportColors = {
     Muscu: '#b30bf5',
     Course: '#3b82f6',
     Fitness: '#10b981',
   };
-
-  // Chargement des activités dès que le token est disponible
   useEffect(() => {
     const fetchActivities = async () => {
       try {
@@ -45,64 +36,58 @@ export default function HomeScreen({ navigation }) {
             headers: { 'Content-Type': 'application/json' },
           }
         );
-
         if (!response.ok) throw new Error('HTTP error! status: ' + response.status);
-
         const data = await response.json();
-
         if (data && data.activities) {
-          const newMarkedDates = {};
-
-          // Marquer la date du jour
-          newMarkedDates[today] = {
-            selected: true,
-            selectedColor: '#5e2a84',
-          };
-
-          // Formater les données pour ne garder que ce qui est nécessaire
-          const formattedActivities = data.activities.map((act) => {
-            const formattedDate = act.date.split('T')[0];
-
-            // Couleur en fonction du type, gris si inconnu
-            const dotColor = sportColors[act.type] || '#999999';
-
-            // Ajouter une seule pastille par date (la première rencontrée)
-            if (!newMarkedDates[formattedDate]) {
-              newMarkedDates[formattedDate] = {
-                marked: true,
-                dotColor,
-              };
-            }
-
-            // Retourner uniquement les infos utiles pour la modal
-            return {
-              date: formattedDate,
-              title: act.title || 'Sans titre',
-              duration: act.duration || 0,
-              rating: act.grade || 0,
-              description: act.comment || 'Pas de description',
-            };
-          });
-
-          setMarkedDates(newMarkedDates);
-          setAllActivities(formattedActivities);
+          formatAndSetCalendar(data.activities);
         }
       } catch (error) {
         console.error('Erreur de chargement des activités :', error);
       }
     };
-
-    if (token) {
-      fetchActivities();
+    if (token) fetchActivities();
+  }, [token, allActivitiesRedux]);
+  const formatAndSetCalendar = (activities) => {
+    const newMarkedDates = {};
+    const formattedActivities = activities.map((act) => {
+      const formattedDate = act.date.split('T')[0];
+      const dotColor = sportColors[act.type] || '#999999';
+      if (!newMarkedDates[formattedDate]) {
+        // Une seule pastille par jour avec couleur de la première activité
+        newMarkedDates[formattedDate] = {
+          marked: true,
+          dotColor: dotColor,
+        };
+      }
+      // Sélectionne aujourd'hui
+      if (formattedDate === today) {
+        newMarkedDates[formattedDate] = {
+          ...newMarkedDates[formattedDate],
+          selected: true,
+          selectedColor: '#7b46f6',
+        };
+      }
+      return {
+        date: formattedDate,
+        title: act.title || 'Sans titre',
+        duration: act.duration || 0,
+        rating: act.grade || 0,
+        description: act.comment || 'Pas de description',
+        type: act.type || '',
+      };
+    });
+    if (!newMarkedDates[today]) {
+      newMarkedDates[today] = {
+        selected: true,
+        selectedColor: '#7b46f6',
+      };
     }
-  }, [token]);
-
-  // Gestion du clic sur une date → ouverture de la modal avec les infos formatées
+    setMarkedDates(newMarkedDates);
+    setAllActivities(formattedActivities);
+  };
   const handleDayPress = (day) => {
     const clickedDate = day.dateString;
-
     const activity = allActivities.find((act) => act.date === clickedDate);
-
     if (activity) {
       setSelectedActivity(activity);
       setModalVisible(true);
@@ -111,74 +96,70 @@ export default function HomeScreen({ navigation }) {
       setModalVisible(false);
     }
   };
-
   return (
     <SafeAreaView style={styles.container}>
-      {/* --- EN-TÊTE --- */}
+      {/* HEADER */}
       <View style={styles.header}>
         <View>
-          <Text style={styles.greeting}>Hello {firstName || "!"}</Text>
+          <Text style={styles.greeting}>
+            👋 Hello {firstName ? firstName.charAt(0).toUpperCase() + firstName.slice(1) : "!"} !
+          </Text>
           <Text style={styles.subTitle}>Vos activités</Text>
         </View>
-        {/* Bouton + pour ajouter une activité */}
         <TouchableOpacity
           style={styles.addButtonContainer}
+          activeOpacity={0.7}
           onPress={() => navigation.navigate('NewActivity')}
         >
           <Text style={styles.addButton}>+</Text>
         </TouchableOpacity>
       </View>
-
-      {/* --- BOUTON VUE LISTE --- */}
+      {/* LIST VIEW BUTTON */}
       <View style={styles.listViewContainer}>
         <TouchableOpacity onPress={() => navigation.navigate('List')}>
           <Text style={styles.listViewText}>Vue liste ➤</Text>
         </TouchableOpacity>
       </View>
-
       <View style={styles.divider} />
-
-      {/* --- CALENDRIER --- */}
+      {/* CALENDAR */}
       <View style={styles.calendarSection}>
         <Calendar
           current={today}
-          markingType={'simple'}
           markedDates={markedDates}
           onDayPress={handleDayPress}
           theme={{
-            backgroundColor: '#ffffff',
-            calendarBackground: '#ffffff',
-            textSectionTitleColor: '#5e2a84ff',
-            selectedDayBackgroundColor: '#84562aff',
-            selectedDayTextColor: '#ffffff',
-            todayTextColor: '#35df13',
-            dayTextColor: '#000000ff',
+            backgroundColor: '#fafafa',
+            calendarBackground: '#fafafa',
+            textSectionTitleColor: '#7b46f6',
+            selectedDayBackgroundColor: '#7b46f6',
+            selectedDayTextColor: '#fff',
+            todayTextColor: '#50cebb',
+            dayTextColor: '#333',
             textDisabledColor: '#d9e1e8',
-            arrowColor: '#5e2a84',
-            monthTextColor: '#da341b',
-            indicatorColor: '#2a8484ff',
-            textDayFontSize: 10,
-            textMonthFontSize: 14,
-            textDayHeaderFontSize: 10,
-            textMonthFontWeight: 'bold',
+            arrowColor: '#7b46f6',
+            monthTextColor: '#7b46f6',
+            indicatorColor: '#7b46f6',
+            textDayFontSize: 14,
+            textMonthFontSize: 18,
+            textDayHeaderFontSize: 14,
+            textMonthFontWeight: '700',
           }}
+          style={styles.calendar}
         />
       </View>
-
       <View style={styles.divider} />
-
-      {/* --- GRAPHIQUE PLACEHOLDER --- */}
+      {/* GRAPH PLACEHOLDER */}
       <Text style={styles.monthTitle}>Ce dernier mois</Text>
       <TouchableOpacity
         style={styles.chartContainer}
         onPress={() => navigation.navigate('Graphs')}
+        activeOpacity={0.8}
       >
         <View style={styles.placeholderBox}>
           <Text style={styles.placeholderText}>[ Graphique ici (API) ]</Text>
         </View>
       </TouchableOpacity>
-
-      {/* --- MODAL D'ACTIVITÉ --- */}
+      {/* MODAL */}
       <Modal
         visible={modalVisible}
         animationType="slide"
@@ -187,26 +168,20 @@ export default function HomeScreen({ navigation }) {
       >
         <View style={styles.modalOverlay}>
           <View style={styles.modalContainer}>
-
-            {/* --- Titre tout en haut --- */}
             <View style={styles.modalHeader}>
               <Text style={styles.modalHeaderTitle}>
                 {selectedActivity?.title?.toUpperCase()}
               </Text>
             </View>
-
-            {/* Image de fond + minutes + étoiles */}
             <ImageBackground
               source={require('../assets/art-8504670_1280.png')}
               style={styles.modalImageBackground}
-              imageStyle={{ borderTopLeftRadius: 0, borderTopRightRadius: 0 }}
+              imageStyle={{ borderTopLeftRadius: 0, borderTopRightRadius: 0, opacity: 0.9 }}
             >
               <View style={styles.modalTopRow}>
-                {/* Minutes */}
                 <Text style={styles.modalDuration}>
                   {selectedActivity?.duration} MIN
                 </Text>
-                {/* Étoiles */}
                 <View style={styles.starContainer}>
                   {[...Array(5)].map((_, i) => (
                     <Text key={i} style={styles.star}>
@@ -216,16 +191,15 @@ export default function HomeScreen({ navigation }) {
                 </View>
               </View>
             </ImageBackground>
-
-            {/* Contenu texte (zone de description) */}
             <View style={styles.modalContent}>
               <Text style={styles.modalDescription}>
                 {selectedActivity?.description}
               </Text>
-
-              {/* Bouton fermer */}
               <Pressable
-                style={styles.closeButton}
+                style={({ pressed }) => [
+                  styles.closeButton,
+                  pressed && { opacity: 0.7 },
+                ]}
                 onPress={() => setModalVisible(false)}
               >
                 <Text style={styles.closeButtonText}>Fermer</Text>
@@ -237,95 +211,141 @@ export default function HomeScreen({ navigation }) {
     </SafeAreaView>
   );
 }
-
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#fff' },
+  container: { flex: 1, backgroundColor: '#fafafa' },
   header: {
-    marginTop: 20,
-    paddingHorizontal: 20,
+    marginTop: 30,
+    paddingHorizontal: 24,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    backgroundColor: 'rgba(123, 70, 246, 0.1)',
+    paddingVertical: 15,
+    borderRadius: 15,
+    marginHorizontal: 16,
+    shadowColor: '#7b46f6',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 5,
   },
-  greeting: { fontSize: 24, fontWeight: 'bold', color: '#5e2a84' },
+  greeting: { fontSize: 26, fontWeight: '800', color: '#5e2a84' },
   subTitle: {
     fontSize: 16,
     color: '#5e2a84',
-    fontWeight: 'bold',
+    fontWeight: '600',
     marginTop: 4,
   },
   addButtonContainer: {
-    backgroundColor: '#da341b',
-    borderRadius: 20,
-    width: 40,
-    height: 40,
+    backgroundColor: '#7b46f6',
+    borderRadius: 25,
+    width: 48,
+    height: 48,
     justifyContent: 'center',
     alignItems: 'center',
+    shadowColor: '#7b46f6',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.4,
+    shadowRadius: 5,
+    elevation: 5,
   },
-  addButton: { fontSize: 28, color: '#fff', lineHeight: 28 },
+  addButton: { fontSize: 34, color: '#fff', lineHeight: 34 },
   listViewContainer: {
     alignItems: 'flex-end',
-    marginBottom: 5,
-    paddingRight: 20,
+    marginBottom: 10,
+    paddingRight: 24,
   },
-  listViewText: { color: '#000000ff', fontSize: 14 },
+  listViewText: {
+    color: '#7b46f6',
+    fontSize: 16,
+    fontWeight: '600',
+    textDecorationLine: 'underline',
+  },
   divider: {
     height: 3,
     alignSelf: 'center',
     borderRadius: 4,
-    backgroundColor: '#5e2a84',
-    width: '70%',
-    marginVertical: 10,
+    backgroundColor: '#7b46f6',
+    width: '75%',
+    marginVertical: 15,
+    shadowColor: '#7b46f6',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
   },
-  calendarSection: { marginBottom: 20, paddingHorizontal: 20 },
+  calendarSection: {
+    marginBottom: 25,
+    paddingHorizontal: 20,
+  },
+  calendar: {
+    borderRadius: 20,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
   monthTitle: {
-    fontSize: 17,
-    fontWeight: 'bold',
+    fontSize: 19,
+    fontWeight: '700',
     marginLeft: 20,
-    marginTop: 10,
-    marginBottom: 15,
+    marginTop: 20,
+    marginBottom: 20,
+    color: '#5e2a84',
   },
-  chartContainer: { alignItems: 'center', marginTop: 10 },
+  chartContainer: {
+    alignItems: 'center',
+    marginTop: 10,
+  },
   placeholderBox: {
     borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 12,
+    borderColor: '#ddd',
+    borderRadius: 15,
     height: 180,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#f9f9f9',
+    backgroundColor: '#fff',
+    width: '90%',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 3,
   },
-  placeholderText: { color: '#999', fontStyle: 'italic' },
-
-  // --- MODAL styles ---
+  placeholderText: { color: '#bbb', fontStyle: 'italic', fontSize: 15 },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.4)',
+    backgroundColor: 'rgba(0,0,0,0.35)',
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 20,
   },
   modalContainer: {
-    width: '90%',
+    width: '92%',
     backgroundColor: '#fff',
-    borderRadius: 12,
+    borderRadius: 18,
     overflow: 'hidden',
+    shadowColor: '#7b46f6',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.15,
+    shadowRadius: 10,
+    elevation: 15,
   },
   modalHeader: {
-    backgroundColor: '#5e2a84',
-    paddingVertical: 15,
-    paddingHorizontal: 20,
+    backgroundColor: '#7b46f6',
+    paddingVertical: 18,
+    paddingHorizontal: 15,
   },
   modalHeaderTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: 'white',
+    fontWeight: '700',
+    fontSize: 24,
+    color: '#fff',
+    letterSpacing: 1.5,
+    textAlign: 'center',
   },
   modalImageBackground: {
-    height: 120,
-    justifyContent: 'space-between',
     paddingHorizontal: 20,
-    paddingVertical: 15,
+    paddingVertical: 12,
   },
   modalTopRow: {
     flexDirection: 'row',
@@ -333,31 +353,40 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   modalDuration: {
-    color: 'white',
-    fontWeight: 'bold',
-    fontSize: 18,
+    fontSize: 22,
+    fontWeight: '700',
+    color: '#fff',
   },
   starContainer: { flexDirection: 'row' },
-  star: {
-    color: '#ffd700',
-    fontSize: 20,
-    marginHorizontal: 2,
-  },
+  star: { fontSize: 20, color: '#fff', marginHorizontal: 1 },
   modalContent: {
-    padding: 20,
+    backgroundColor: '#f5f3ff',
+    paddingVertical: 30,
+    paddingHorizontal: 25,
+    borderBottomLeftRadius: 18,
+    borderBottomRightRadius: 18,
   },
   modalDescription: {
+    color: '#3c365d',
     fontSize: 16,
-    marginBottom: 20,
+    fontWeight: '500',
+    lineHeight: 22,
   },
   closeButton: {
-    backgroundColor: '#5e2a84',
-    borderRadius: 8,
-    paddingVertical: 10,
+    marginTop: 25,
+    backgroundColor: '#7b46f6',
+    paddingVertical: 13,
+    borderRadius: 15,
+    shadowColor: '#7b46f6',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    elevation: 8,
   },
   closeButtonText: {
+    color: '#fff',
+    fontWeight: '700',
+    fontSize: 16,
     textAlign: 'center',
-    color: 'white',
-    fontWeight: 'bold',
   },
 });
