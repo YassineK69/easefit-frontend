@@ -26,9 +26,6 @@ export default function SignInScreen({ navigation }) {
       .then(response => response.json())
       .then(data => {
         if (data.result) {
-          console.log('data.activities:', data.activities);
-          console.log('data', data);
-
           // Stocke le firstName en plus
           dispatch(login({ 
             email: signInEmail, 

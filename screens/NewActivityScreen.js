@@ -42,7 +42,6 @@ export default function NewActivityScreen({ navigation }) {
           })     
           .then (response => response.json())
           .then(data => {
-            console.log('test2')
             if (data.result){
               dispatch(addNewActivity(data.newActivity));
               resetForm();

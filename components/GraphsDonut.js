@@ -11,7 +11,7 @@ import {
 import { LinearGradient, vec } from "@shopify/react-native-skia";
 import { Pie, PolarChart } from "victory-native";
 import { useFonts } from "expo-font";
-import { appColors } from "../consts/appColors";
+import { activities , appColors } from "../consts/appColors";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import { useSelector } from "react-redux";
 import compareDate from "./compareDate";
@@ -82,7 +82,6 @@ function traitementDuree(dataActivities, start, end) {
   return DATA;
 }
 
-const activities = Object.keys(appColors);
 
 //***************************************** */
 export default function GraphDonut(props) {
@@ -116,7 +115,8 @@ export default function GraphDonut(props) {
           alignItems: "center",
           marginTop: 4,
           justifyContent: "center",
-          padding: 8,
+          padding: 4,
+          width:"48%"
         }}
         onPress={() => setSelectActivity(i)}
       >
@@ -135,15 +135,15 @@ export default function GraphDonut(props) {
     <View
       style={{
         height: 400,
-        width: "95%",
+        width: "100%",
         borderWidth: 1,
         margin: "auto",
-        marginTop: 50,
+        marginTop: 30,
         backgroundColor: "#fff",
         borderRadius: 2,
       }}
     >
-      <View style={{ margin: 10, borderWidth: 1, borderColor: "#000" }}>
+      <View style={{ margin: 10, borderWidth: 1, borderColor: "#aaa" }}>
         <View
           style={{
             flexDirection: "row",
@@ -160,7 +160,7 @@ export default function GraphDonut(props) {
             ]}
             onPress={() => setSelectDonut(true)}
           >
-            <Text style={{ margin: "auto", color: "#fff" }}>NOMBRE</Text>
+            <Text style={{ margin: "auto", color: "#fff",padding:3, fontSize:18 }}>NOMBRE</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -172,7 +172,7 @@ export default function GraphDonut(props) {
             ]}
             onPress={() => setSelectDonut(false)}
           >
-            <Text style={{ margin: "auto", color: "#fff" }}>DUREE</Text>
+            <Text style={{ margin: "auto", color: "#fff",padding:3, fontSize:18 }}>DUREE</Text>
           </TouchableOpacity>
         </View>
         <View
@@ -180,6 +180,7 @@ export default function GraphDonut(props) {
             flexDirection: "row",
             justifyContent: "space-around",
             alignItems: "center",
+            flexWrap:"wrap",
           }}
         >
           {legend}
@@ -194,7 +195,7 @@ export default function GraphDonut(props) {
           borderColor: "#f00",
           padding: 5,
           margin: 5,
-          borderWidth: 1,
+          borderWidth: 0,
           color: "#000",
         }}
         canvasStyle={{ borderWidth: 1, color: "#000", padding: 10 }}
@@ -235,7 +236,7 @@ export default function GraphDonut(props) {
       <Text
         style={{
           margin: 10,
-          borderWidth: 1,
+          borderWidth: 0,
           borderColor: "#000",
           margin: "auto",
           fontSize: 20,
