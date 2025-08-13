@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -8,13 +8,15 @@ import {
   Modal,
   Pressable,
   ImageBackground,
-} from 'react-native';
-import { Calendar } from 'react-native-calendars';
-import { useSelector } from 'react-redux';
+} from "react-native";
+import { Calendar } from "react-native-calendars";
+import { useSelector } from "react-redux";
+import ModaleComponent from "../components/ModaleComponent";
+import Carroussel from "../components/Carroussel";
 
 export default function HomeScreen({ navigation }) {
   // Date du jour au format YYYY-MM-DD
-  const today = new Date().toISOString().split('T')[0];
+  const today = new Date().toISOString().split("T")[0];
 
   // Récupération du token et prénom depuis Redux
   const token = useSelector((state) => state.user.value.token);
@@ -28,72 +30,59 @@ export default function HomeScreen({ navigation }) {
 
   // Couleurs associées aux types de sport
   const sportColors = {
-    Muscu: '#b30bf5',
-    Course: '#3b82f6',
-    Fitness: '#10b981',
+    Muscu: "#b30bf5",
+    Course: "#3b82f6",
+    Fitness: "#10b981",
+  };
+
+  const handleModalVisible = (value) => {
+    setModalVisible(value);
   };
 
   // Chargement des activités dès que le token est disponible
+
+  const dataActivities = useSelector((state) => state.activities.value);
+  //console.log("dataActivities",dataActivities);
+
   useEffect(() => {
-    const fetchActivities = async () => {
-      try {
-        const response = await fetch(
-          `${process.env.EXPO_PUBLIC_URL_VERCEL}/activities/calendar/${token}`,
-          {
-            method: 'GET',
-            headers: { 'Content-Type': 'application/json' },
-          }
-        );
+    const data = dataActivities;
 
-        if (!response.ok) throw new Error('HTTP error! status: ' + response.status);
+    const newMarkedDates = {};
 
-        const data = await response.json();
-
-        if (data && data.activities) {
-          const newMarkedDates = {};
-
-          // Marquer la date du jour
-          newMarkedDates[today] = {
-            selected: true,
-            selectedColor: '#5e2a84',
-          };
-
-          // Formater les données pour ne garder que ce qui est nécessaire
-          const formattedActivities = data.activities.map((act) => {
-            const formattedDate = act.date.split('T')[0];
-
-            // Couleur en fonction du type, gris si inconnu
-            const dotColor = sportColors[act.type] || '#999999';
-
-            // Ajouter une seule pastille par date (la première rencontrée)
-            if (!newMarkedDates[formattedDate]) {
-              newMarkedDates[formattedDate] = {
-                marked: true,
-                dotColor,
-              };
-            }
-
-            // Retourner uniquement les infos utiles pour la modal
-            return {
-              date: formattedDate,
-              title: act.title || 'Sans titre',
-              duration: act.duration || 0,
-              rating: act.grade || 0,
-              description: act.comment || 'Pas de description',
-            };
-          });
-
-          setMarkedDates(newMarkedDates);
-          setAllActivities(formattedActivities);
-        }
-      } catch (error) {
-        console.error('Erreur de chargement des activités :', error);
-      }
+    // Marquer la date du jour
+    newMarkedDates[today] = {
+      selected: true,
+      selectedColor: "#5e2a84",
     };
 
-    if (token) {
-      fetchActivities();
-    }
+    // Formater les données pour ne garder que ce qui est nécessaire
+    const formattedActivities = data.map((act) => {
+      const formattedDate = act.date.split("T")[0];
+
+      // Couleur en fonction du type, gris si inconnu
+      const dotColor = sportColors[act.type] || "#999999";
+
+      // Ajouter une seule pastille par date (la première rencontrée)
+      if (!newMarkedDates[formattedDate]) {
+        newMarkedDates[formattedDate] = {
+          marked: true,
+          dotColor,
+        };
+      }
+
+      // Retourner uniquement les infos utiles pour la modal
+      return {
+        date: formattedDate,
+        title: act.title || "Sans titre",
+        duration: act.duration || 0,
+        rating: act.grade || 0,
+        description: act.comment || "Pas de description",
+        activitiesPic: act.activitiesPic,
+      };
+    });
+
+    setMarkedDates(newMarkedDates);
+    setAllActivities(formattedActivities);
   }, [token]);
 
   // Gestion du clic sur une date → ouverture de la modal avec les infos formatées
@@ -122,7 +111,7 @@ export default function HomeScreen({ navigation }) {
         {/* Bouton + pour ajouter une activité */}
         <TouchableOpacity
           style={styles.addButtonContainer}
-          onPress={() => navigation.navigate('NewActivity')}
+          onPress={() => navigation.navigate("NewActivity")}
         >
           <Text style={styles.addButton}>+</Text>
         </TouchableOpacity>
@@ -130,7 +119,7 @@ export default function HomeScreen({ navigation }) {
 
       {/* --- BOUTON VUE LISTE --- */}
       <View style={styles.listViewContainer}>
-        <TouchableOpacity onPress={() => navigation.navigate('List')}>
+        <TouchableOpacity onPress={() => navigation.navigate("List")}>
           <Text style={styles.listViewText}>Vue liste ➤</Text>
         </TouchableOpacity>
       </View>
@@ -141,25 +130,25 @@ export default function HomeScreen({ navigation }) {
       <View style={styles.calendarSection}>
         <Calendar
           current={today}
-          markingType={'simple'}
+          markingType={"simple"}
           markedDates={markedDates}
           onDayPress={handleDayPress}
           theme={{
-            backgroundColor: '#ffffff',
-            calendarBackground: '#ffffff',
-            textSectionTitleColor: '#5e2a84ff',
-            selectedDayBackgroundColor: '#84562aff',
-            selectedDayTextColor: '#ffffff',
-            todayTextColor: '#35df13',
-            dayTextColor: '#000000ff',
-            textDisabledColor: '#d9e1e8',
-            arrowColor: '#5e2a84',
-            monthTextColor: '#da341b',
-            indicatorColor: '#2a8484ff',
+            backgroundColor: "#ffffff",
+            calendarBackground: "#ffffff",
+            textSectionTitleColor: "#5e2a84ff",
+            selectedDayBackgroundColor: "#84562aff",
+            selectedDayTextColor: "#ffffff",
+            todayTextColor: "#35df13",
+            dayTextColor: "#000000ff",
+            textDisabledColor: "#d9e1e8",
+            arrowColor: "#5e2a84",
+            monthTextColor: "#da341b",
+            indicatorColor: "#2a8484ff",
             textDayFontSize: 10,
             textMonthFontSize: 14,
             textDayHeaderFontSize: 10,
-            textMonthFontWeight: 'bold',
+            textMonthFontWeight: "bold",
           }}
         />
       </View>
@@ -170,7 +159,7 @@ export default function HomeScreen({ navigation }) {
       <Text style={styles.monthTitle}>Ce dernier mois</Text>
       <TouchableOpacity
         style={styles.chartContainer}
-        onPress={() => navigation.navigate('Graphs')}
+        onPress={() => navigation.navigate("Graphs")}
       >
         <View style={styles.placeholderBox}>
           <Text style={styles.placeholderText}>[ Graphique ici (API) ]</Text>
@@ -185,51 +174,13 @@ export default function HomeScreen({ navigation }) {
         onRequestClose={() => setModalVisible(false)}
       >
         <View style={styles.modalOverlay}>
-          <View style={styles.modalContainer}>
-
-            {/* Image de fond + titre + minutes + étoiles */}
-            <ImageBackground
-              source={require('../assets/fondnewactivity.jpg')}
-              style={styles.modalImageBackground}
-              imageStyle={{ borderTopLeftRadius: 0, borderTopRightRadius: 0 }}
-            >
-              <View style={styles.modalHeader}>
-                  <Text style={styles.modalHeaderTitle}>
-                    {selectedActivity?.title?.toUpperCase()}
-                  </Text>
-              </View>
-
-              <View style={styles.modalTopRow}>
-                {/* Minutes */}
-                <Text style={styles.modalDuration}>
-                  {selectedActivity?.duration} MIN
-                </Text>
-                {/* Étoiles */}
-                <View style={styles.starContainer}>
-                  {[...Array(5)].map((_, i) => (
-                    <Text key={i} style={styles.star}>
-                      {i < selectedActivity?.rating ? '★' : '☆'}
-                    </Text>
-                  ))}
-                </View>
-              </View>
-            </ImageBackground>
-
-            {/* Contenu texte (zone de description) */}
-            <View style={styles.modalContent}>
-              <Text style={styles.modalDescription}>
-                {selectedActivity?.description}
-              </Text>
-
-              {/* Bouton fermer */}
-              <Pressable
-                style={styles.closeButton}
-                onPress={() => setModalVisible(false)}
-              >
-                <Text style={styles.closeButtonText}>Fermer</Text>
-              </Pressable>
-            </View>
-          </View>
+          <Carroussel selectedActivity={selectedActivity} />
+          <Pressable
+            style={styles.closeButton}
+            onPress={() => setModalVisible(false)}
+          >
+            <Text style={styles.closeButtonText}>Fermer</Text>
+          </Pressable>
         </View>
       </Modal>
     </SafeAreaView>
@@ -237,86 +188,86 @@ export default function HomeScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#fff' },
+  container: { flex: 1, backgroundColor: "#fff" },
   header: {
     marginTop: 20,
     paddingHorizontal: 20,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
-  greeting: { fontSize: 24, fontWeight: 'bold', color: '#5e2a84' },
+  greeting: { fontSize: 24, fontWeight: "bold", color: "#5e2a84" },
   subTitle: {
     fontSize: 16,
-    color: '#5e2a84',
-    fontWeight: 'bold',
+    color: "#5e2a84",
+    fontWeight: "bold",
     marginTop: 4,
   },
   addButtonContainer: {
-    backgroundColor: '#da341b',
+    backgroundColor: "#da341b",
     borderRadius: 20,
     width: 40,
     height: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
-  addButton: { fontSize: 28, color: '#fff', lineHeight: 28 },
+  addButton: { fontSize: 28, color: "#fff", lineHeight: 28 },
   listViewContainer: {
-    alignItems: 'flex-end',
+    alignItems: "flex-end",
     marginBottom: 5,
     paddingRight: 20,
   },
-  listViewText: { color: '#000000ff', fontSize: 14 },
+  listViewText: { color: "#000000ff", fontSize: 14 },
   divider: {
     height: 3,
-    alignSelf: 'center',
+    alignSelf: "center",
     borderRadius: 4,
-    backgroundColor: '#5e2a84',
-    width: '70%',
+    backgroundColor: "#5e2a84",
+    width: "70%",
     marginVertical: 10,
   },
   calendarSection: { marginBottom: 20, paddingHorizontal: 20 },
   monthTitle: {
     fontSize: 17,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginLeft: 20,
     marginTop: 10,
     marginBottom: 15,
   },
-  chartContainer: { alignItems: 'center', marginTop: 10 },
+  chartContainer: { alignItems: "center", marginTop: 10 },
   placeholderBox: {
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: "#ccc",
     borderRadius: 12,
     height: 180,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#f9f9f9',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#f9f9f9",
   },
-  placeholderText: { color: '#999', fontStyle: 'italic' },
+  placeholderText: { color: "#999", fontStyle: "italic" },
 
   // --- MODAL styles ---
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.4)',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "rgba(0,0,0,0.4)",
+    justifyContent: "center",
+    alignItems: "center",
     paddingHorizontal: 20,
   },
   modalContainer: {
-    width: '95%',
-    backgroundColor: '#fff',
+    width: "100%",
+    backgroundColor: "#fff",
     borderRadius: 25,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   modalHeader: {
     paddingVertical: 30,
-    alignItems : 'center',
+    alignItems: "center",
   },
   modalHeaderTitle: {
     fontSize: 20,
-    fontWeight: 'bold',
-    color: 'white',
+    fontWeight: "bold",
+    color: "white",
   },
   modalImageBackground: {
     height: 150,
@@ -324,18 +275,18 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
   },
   modalTopRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   modalDuration: {
-    color: 'white',
-    fontWeight: 'bold',
+    color: "white",
+    fontWeight: "bold",
     fontSize: 18,
   },
-  starContainer: { flexDirection: 'row' },
+  starContainer: { flexDirection: "row" },
   star: {
-    color: '#ffd700',
+    color: "#ffd700",
     fontSize: 20,
     marginHorizontal: 2,
   },
@@ -347,13 +298,14 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   closeButton: {
-    backgroundColor: '#5e2a84',
+    backgroundColor: "#5e2a84",
     borderRadius: 8,
-    paddingVertical: 10,
+    padding: 10,
+    margin: 10,
   },
   closeButtonText: {
-    textAlign: 'center',
-    color: 'white',
-    fontWeight: 'bold',
+    textAlign: "center",
+    color: "white",
+    fontWeight: "bold",
   },
 });

@@ -13,7 +13,6 @@ import {
 
 export default function ModaleComponent(props) {
   const selectedActivity = props.selectedActivity;
-  console.log(selectedActivity);
   return (
     <View style={styles.modalContainer}>
       {/* Image de fond + titre + minutes + étoiles */}

@@ -1,6 +1,7 @@
 import { useRef , useState} from "react";
 import { Dimensions, Text, View, StyleSheet, Image } from "react-native";
 import { useSharedValue } from "react-native-reanimated";
+
 import Carousel, {
   ICarouselInstance,
   Pagination,
@@ -8,16 +9,30 @@ import Carousel, {
 import ModaleComponent from "./ModaleComponent";
 
 const data = [
-  { id:0},
-  { id: 1, title: "Image 1", src: require("../assets/fond1.jpg") },
-  { id: 2, title: "Image 2", src: require("../assets/fond2.jpg") },
-  { id: 3, title: "Image 3", src: require("../assets/gym.png") },
+  { id: 0},
+  { id: 1, uri: "https://res.cloudinary.com/dtrbfskhf/image/upload/v1755007934/j3ddqwfw4heldilvm65y.jpg" },
+  { id: 2, uri:"https://res.cloudinary.com/dtrbfskhf/image/upload/v1755007934/j3ddqwfw4heldilvm65y.jpg" },
+  { id: 3, uri: "https://res.cloudinary.com/dtrbfskhf/image/upload/v1755007934/j3ddqwfw4heldilvm65y.jpg" },
 ];
 const width = Dimensions.get("window").width;
 const height = 250;
 
+
+
+
 //***************************************** */
 export default function Carroussel(props) {
+  console.log(props.selectedActivity);
+
+  // const data2 = props.selectedActivity.activitiesPic.map((uri,i)=>{
+  //   const newObj = {
+  //     id: i,
+  //     uri: uri,
+  //   };
+  //   return newObj;
+  // })
+  // console.log(data2)
+
   const ref = useRef(null);
   const progress = useSharedValue(0);
 
@@ -40,7 +55,6 @@ export default function Carroussel(props) {
           if (item.id === 0) {
             return <ModaleComponent selectedActivity={props.selectedActivity} />;
           } else {
-            console.log(item.id,height);
 
             return (
               <View
@@ -51,8 +65,7 @@ export default function Carroussel(props) {
                   
                 }}
               >
-                <Image source={item.src} style={styles.image} />
-                <Text style={styles.title}>{item.title}</Text>
+                <Image  source={{uri: item.uri} }  style={styles.image} />
               </View>
             );
           }
