@@ -44,7 +44,7 @@ export default function Carroussel(props) {
   };
 
   return (
-    <View style={{ borderWidth: 0, borderColor: "#fff" }}>
+    <View style={{borderWidth: 0, borderColor: "#fafafa" }}>
       <Carousel
         ref={ref}
         width={width}

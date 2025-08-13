@@ -15,6 +15,7 @@ export default function ModaleComponent(props) {
   const selectedActivity = props.selectedActivity;
   return (
     <View style={styles.modalContainer}>
+      
       {/* Image de fond + titre + minutes + étoiles */}
       <ImageBackground
         source={require("../assets/fondnewactivity.jpg")}
@@ -58,7 +59,7 @@ export default function ModaleComponent(props) {
 const styles = StyleSheet.create({
   modalContainer: {
     width: "100%",
-    backgroundColor: "#fff",
+    backgroundColor: "#fafafa",
     borderRadius: 25,
     overflow: "hidden",
   },
