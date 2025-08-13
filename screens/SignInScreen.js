@@ -162,7 +162,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Manrope_400Regular',
     marginBottom : 10,
   },
-  //
+  ////
   textSignUp:{
     color: 'white', 
     fontSize : 12,
