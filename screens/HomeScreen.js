@@ -174,10 +174,16 @@ export default function HomeScreen({ navigation }) {
               </Text>
             </View>
             <ImageBackground
-              source={require('../assets/art-8504670_1280.png')}
+              source={require('../assets/fondnewactivity.jpg')}
               style={styles.modalImageBackground}
               imageStyle={{ borderTopLeftRadius: 0, borderTopRightRadius: 0, opacity: 0.9 }}
             >
+              <View style={styles.modalHeader}>
+                  <Text style={styles.modalHeaderTitle}>
+                    {selectedActivity?.title?.toUpperCase()}
+                  </Text>
+              </View>
+
               <View style={styles.modalTopRow}>
                 <Text style={styles.modalDuration}>
                   {selectedActivity?.duration} MIN
