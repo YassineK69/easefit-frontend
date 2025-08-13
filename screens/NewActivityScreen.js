@@ -3,6 +3,7 @@ import { useState } from 'react';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { useDispatch, useSelector } from "react-redux";
 import { addNewActivity} from '../reducers/activities';
+import * as ImagePicker from 'expo-image-picker';
 
 import Dropdown from "../components/sporttype";
 import ActivityDateModal from "../components/activitydate";
@@ -19,6 +20,8 @@ export default function NewActivityScreen({ navigation }) {
   const [activityType, setActivityType] = useState(null); 
   const [activityDate, setActivityDate] = useState(new Date()); 
   const [activityGrade, setActivityGrade] = useState(0);
+  const [activityImageUri, setActivityImageUri] = useState(null);
+  const [activityImageName, setActivityImageName] = useState(null);
 
       const resetForm = () => {
         setActivityTitle('');
@@ -29,16 +32,57 @@ export default function NewActivityScreen({ navigation }) {
         setActivityComment('');
       };
 
+  const handleGallery = async ()=> {
+
+      const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+  
+      if (permissionResult.status !== 'granted') {
+        alert("Permission d'accéder à la galerie refusée !");
+        return;
+      }
+    
+      let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
+      });
+
+      if (!result.canceled) {
+        const fullUri = result.assets[0].uri;
+        setActivityImageUri(fullUri);
+
+        const fullName = fullUri.split("/").pop();
+        const ext = fullName.split(".").pop();
+        const namePart = fullName.slice(0, 8); 
+        setActivityImageName(`${namePart}...${ext}`);
+      }
+  }
+
   const handleRegister =() => {
 
     if (!activityTitle || !activityType || !activityDuration || !activityDate || !activityGrade) {
       return
     } else {
-      
+      const formData = new FormData();
+        formData.append("title", activityTitle);
+        formData.append("type", activityType);
+        formData.append("date", activityDate.toUTCString()); 
+        formData.append("duration", activityDuration);
+        formData.append("grade", activityGrade);
+        formData.append("comment", activityComment);
+
+      if(activityImageUri){
+        formData.append("activitiesPic", {
+          uri: activityImageUri,
+          name: activityImageUri.split("/").pop(),
+          type: "image/jpeg", 
+        });
+      }
+        
         fetch(`${process.env.EXPO_PUBLIC_URL_VERCEL}/activities/newactivity/${token}`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ title: activityTitle, type: activityType, date : activityDate, duration : activityDuration, grade : activityGrade, comment : activityComment, activitiesPic : []}),
+            body: formData,
           })     
           .then (response => response.json())
           .then(data => {
@@ -87,8 +131,11 @@ export default function NewActivityScreen({ navigation }) {
 
             <View style={styles.input}>
               <Text style={styles.prop}>Photos/Vidéos</Text>
-              <View style={styles.fakeInput}>
-                <FontAwesome name='upload' size={25} color='black' />
+              <View style={styles.upload}>
+              <TouchableOpacity style={styles.fakeInput} onPress={() => handleGallery()} >
+                <FontAwesome name='upload' size={25} color='black'/>
+              </TouchableOpacity>
+              {activityImageName && (<Text style={{ color: 'white', marginTop: 5 }}>{activityImageName}</Text>)}
               </View>
             </View>
 
@@ -249,5 +296,5 @@ const styles = StyleSheet.create({
     color: 'black', 
     fontSize : 20,
     fontWeight: '600',                  //Change here
-  }
+  }, 
 });
