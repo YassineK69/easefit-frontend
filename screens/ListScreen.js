@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import Dropdown from "../components/sporttype";
 import { useState } from 'react';
 import CustomTabBarBackground from "../components/CustomTabBarBackground";
+import Carroussel from "../components/Carroussel";
 
 export default function ListScreen({ navigation }) {
 

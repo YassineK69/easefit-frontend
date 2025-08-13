@@ -57,6 +57,7 @@ export default function HomeScreen({ navigation }) {
         rating: act.grade || 0,
         description: act.comment || "Pas de description",
         type: act.type || "",
+        activitiesPic:act.activitiesPic,
       };
     });
     if (!newMarkedDates[today]) {
