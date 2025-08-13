@@ -1,11 +1,22 @@
 import { CartesianChart, Bar, useChartPressState } from "victory-native";
-import { View, Text } from "react-native";
+import {
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  View,
+  Button,
+  TouchableOpacity,
+  Text,
+} from "react-native";
 import { Circle, useFont, vec } from "@shopify/react-native-skia";
 import { useState } from "react";
 import { LinearGradient } from "@shopify/react-native-skia";
 import { useFonts } from "expo-font";
 import inter from "../assets/fonts/Manrope-Regular.ttf";
 import { appColors } from "../consts/appColors";
+import FontAwesome from "react-native-vector-icons/FontAwesome";
+import { useSelector } from "react-redux";
+import compareDate from "./compareDate";
 
 const DATA = Array.from({ length: 5 }, (_, i) => ({
   day: i,

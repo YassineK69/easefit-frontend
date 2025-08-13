@@ -17,9 +17,10 @@ import { LinearGradient } from "expo-linear-gradient";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import { useFonts } from "expo-font";
 import fontGraph from "../assets/fonts/Manrope-Regular.ttf";
-import GraphsBar from "../components/GraphsBar";
+import GraphsDurationBar from "../components/GraphsDurationBar";
 import GraphsDonut from "../components/GraphsDonut";
-import GraphsMultiBars from "../components/GraphsMultiBars";
+import GraphsStars from "../components/GraphsStars";
+
 import { useSelector } from "react-redux";
 import { useState, useEffect } from "react";
 import DatePickerWithModal from "../components/SelectDate";
@@ -59,7 +60,7 @@ export default function GraphsScreen({ navigation }) {
             onPress={() =>
               navigation.navigate("TabNavigator", { screen: "Home" })
             }
-            style={{ borderWidth: 1 }}
+            style={{ borderWidth: 0 }}
           >
             <FontAwesome
               name="caret-left"
@@ -88,7 +89,7 @@ export default function GraphsScreen({ navigation }) {
             style={{
               borderColor: "#fff",
               flexDirection: "row",
-              borderWidth: 1,
+              borderWidth: 0,
               justifyContent: "space-between",
               width: "100%",
               padding: 5,
@@ -98,7 +99,7 @@ export default function GraphsScreen({ navigation }) {
               style={{
                 borderColor: "#fff",
                 flexDirection: "row",
-                borderWidth: 1,
+                borderWidth: 0,
               }}
             >
               <Text style={{ padding: 10, color: "#fff" }}>Entre le :</Text>
@@ -111,7 +112,7 @@ export default function GraphsScreen({ navigation }) {
               style={{
                 borderColor: "#fff",
                 flexDirection: "row",
-                borderWidth: 1,
+                borderWidth: 0,
               }}
             >
               <Text style={{ padding: 10, color: "#fff" }}>et :</Text>
@@ -125,9 +126,9 @@ export default function GraphsScreen({ navigation }) {
 
         <ScrollView style={{ width: "100%" }}>
           <GraphsDonut start={start} end={end} />
-          <GraphsMultiBars data={data} />
+          <GraphsDurationBar start={start} end={end} />
+          <GraphsStars start={start} end={end} />
 
-          <GraphsBar data={data} />
         </ScrollView>
       </SafeAreaView>
     </LinearGradient>
@@ -165,11 +166,12 @@ const styles = StyleSheet.create({
   },
   topContainer: {
     flexDirection: "row",
-    borderWidth: 1,
+    borderBottomWidth: 1,
     borderColor: "#fff",
     width: "100%",
     justifyContent: "space-between",
     alignItems: "flex-end",
     marginTop: 30,
+    marginBottom:0,
   },
 });
