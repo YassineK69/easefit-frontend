@@ -1,131 +1,176 @@
-import { StyleSheet, Text, View, Image, ImageBackground, KeyboardAvoidingView } from "react-native";
-import { useSelector } from "react-redux";
-import FontAwesome from "react-native-vector-icons/FontAwesome";
-import { useEffect, useState } from "react";
+import { ImageBackground, Image, StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { logout } from '../reducers/user';
 
 export default function Profile({ navigation }) {
   const [userInfos, setUserInfos] = useState({});
   const user = useSelector((state) => state.user.value);
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    fetch(`${process.env.EXPO_PUBLIC_URL_VERCEL}/users/${user.token}`)
-      .then((response) => response.json())
-      .then((data) => {
-        const Birthday = new Date(data.birthday);
-        const date = Birthday.toLocaleDateString("fr");
+    if (user.token) {
+      fetch(`${process.env.EXPO_PUBLIC_URL_VERCEL}/users/${user.token}`)
+        .then(response => response.json())
+        .then(data => {
+          const Birthday = new Date(data.birthday);
+          const date = Birthday.toLocaleDateString("fr-FR");
 
-        const dateInfo = {
-          firstName: data.firstName,
-          birthday: date,
-          gender: data.gender,
-          height: data.height,
-          idActivities: data.idActivities,
-        };
+          setUserInfos({
+            firstName: data.firstName || '',
+            birthday: date || '',
+            gender: data.gender || '',
+            height: data.height || '',
+            idActivities: data.idActivities || '',
+          });
+        });
+    }
+  }, [user.token]);
 
-        setUserInfos(dateInfo);
-      });
-  }, []);
+  const handleLogout = () => {
+    dispatch(logout());
+    navigation.replace("SignIn");
+  };
 
   return (
     <ImageBackground
       source={require("../assets/fond3.jpg")}
       style={styles.imageBackground}
+      blurRadius={3} // moins flou pour fond plus visible
     >
-      <KeyboardAvoidingView style={styles.container}>
-        <View style={styles.header}>
-          <FontAwesome name="pencil" size={25} color="white" style={styles.filtre}/>
+      <View style={styles.overlay} />
+
+      <View style={styles.container}>
+        <View style={styles.profileCard}>
           <Image
             source={require("../assets/avatar.jpg")}
-            style={{ width: 120, height: 120 }}
+            style={styles.avatar}
           />
-          <Text style={styles.text}>{userInfos.firstName}</Text>
-        </View>
+          <Text style={styles.name}>{userInfos.firstName}</Text>
 
-        <View style={styles.body}>
-          <View style={styles.contentBody}>
-            <Text style={styles.text}>Nom :</Text>
-            <Text style={styles.textA}>{userInfos.firstName}</Text>
+          <View style={styles.infoSection}>
+            <View style={styles.infoRow}>
+              <Text style={styles.label}>Nom :</Text>
+              <Text style={styles.value}>{userInfos.firstName}</Text>
+            </View>
+            <View style={styles.infoRow}>
+              <Text style={styles.label}>Anniversaire :</Text>
+              <Text style={styles.value}>{userInfos.birthday}</Text>
+            </View>
+            <View style={styles.infoRow}>
+              <Text style={styles.label}>Genre :</Text>
+              <Text style={styles.value}>{userInfos.gender}</Text>
+            </View>
+            <View style={styles.infoRow}>
+              <Text style={styles.label}>Taille :</Text>
+              <Text style={styles.value}>{userInfos.height} cm</Text>
+            </View>
+            <View style={styles.infoRow}>
+              <Text style={styles.label}>Activité :</Text>
+              <Text style={styles.value}>{userInfos.idActivities}</Text>
+            </View>
           </View>
-          <View style={styles.contentBody}>
-            <Text style={styles.text}>Birthday :</Text>
-            <Text style={styles.textA}>{userInfos.birthday}</Text>
-          </View>
-          <View style={styles.contentBody}>
-            <Text style={styles.text}>Genre :</Text>
-            <Text style={styles.textA}>{userInfos.gender}</Text>
-          </View>
-          <View style={styles.contentBody}>
-            <Text style={styles.text}>Taille :</Text>
-            <Text style={styles.textA}>{userInfos.height}</Text>
-          </View>
-          <View style={styles.contentBody}>
-            <Text style={styles.text}>Activités :</Text>
-            <Text style={styles.textA}>{userInfos.idActivities}</Text>
-          </View>
+
+          <TouchableOpacity style={styles.logoutButton} onPress={handleLogout} activeOpacity={0.8}>
+            <Text style={styles.logoutText}>Déconnexion</Text>
+          </TouchableOpacity>
         </View>
-      </KeyboardAvoidingView>
+      </View>
     </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
   imageBackground: {
-    height: "100%",
-    width: "100%",
+    flex: 1,
+    resizeMode: "cover",
+    justifyContent: "center",
+  },
+
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0,0,0,0.15)', // overlay moins sombre
   },
 
   container: {
     flex: 1,
+    justifyContent: 'center',
+    paddingHorizontal: 25,
+  },
+
+  profileCard: {
+    backgroundColor: "#fff",
+    borderRadius: 20,
+    paddingVertical: 40,
+    paddingHorizontal: 30,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.3,
+    shadowRadius: 20,
+    elevation: 15,
+    alignItems: "center",
+  },
+
+  avatar: {
+    width: 130,
+    height: 130,
+    borderRadius: 65,
+    marginBottom: 25,
+    borderWidth: 3,
+    borderColor: "#4a90e2",
+  },
+
+  name: {
+    fontSize: 28,
+    fontWeight: "700",
+    color: "#333",
+    marginBottom: 30,
+    textTransform: "capitalize",
+  },
+
+  infoSection: {
     width: "100%",
+    marginBottom: 40,
   },
 
-  header: {
-    alignItems: "center",
-    justifyContent: "center",
-    paddingTop: 50,
-    paddingBottom: 20,
-    borderBottomWidth: 2,
-    borderBottomColor: "white",
+  infoRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: "#eee",
+    paddingBottom: 10,
   },
 
-  body: {
-    alignItems: "center",
-    justifyContent: "center",
-    borderBottomWidth: 2,
-    borderBottomColor: "white",
-    paddingBottom: 25,
-    margin: 20,
+  label: {
+    fontSize: 18,
+    color: "#666",
+    fontWeight: "600",
   },
 
-  text: {
-    fontSize: 25,
-    color: "#FFF",
-    fontWeight: "bold",
+  value: {
+    fontSize: 18,
+    color: "#222",
+    fontWeight: "600",
+    textTransform: "capitalize",
   },
 
-  textA: {
-    fontSize: 25,
-    color: "#ffffffff",
-    width:'60%',
-    fontWeight: "bold",
-    padding: 10,
-    borderWidth: 1,
-    borderRadius: 10,
-    backgroundColor: "rgba(255, 255, 255, 0.4)",
-    borderColor: "#8c8c8cff",
-    overflow: "hidden",
+  logoutButton: {
+    backgroundColor: "#e94e4e",
+    paddingVertical: 15,
+    paddingHorizontal: 50,
+    borderRadius: 30,
+    shadowColor: "#e94e4e",
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.4,
+    shadowRadius: 10,
+    elevation: 8,
   },
 
-  contentBody  : {
-    flexDirection:'row',
-    justifyContent:'space-between', 
-    width:'100%',
-    alignItems:'center',
-    margin: 15,
-  },
-
-  filtre: {
-    paddingLeft: 300,
-    fontSize: 30,
+  logoutText: {
+    color: "#fff",
+    fontSize: 20,
+    fontWeight: "700",
+    textAlign: "center",
   },
 });

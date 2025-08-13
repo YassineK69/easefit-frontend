@@ -70,6 +70,9 @@ const TabNavigator = () => {
       <Tab.Screen
         name="Profile"
         component={ProfileScreen}
+        options={
+          {} // voir si integration d'un background tabbar ou laisser blanc 
+        }
       />
     </Tab.Navigator>
   );
