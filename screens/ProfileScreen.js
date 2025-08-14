@@ -34,16 +34,16 @@ export default function Profile({ navigation }) {
 
   return (
     <ImageBackground
-      source={require("../assets/fond3.jpg")}
+      source={require("../assets/images/fond-abstrait-3d.jpg")}
       style={styles.imageBackground}
-      blurRadius={3} // moins flou pour fond plus visible
+      blurRadius={4} //  flou pour fond plus visible
     >
       <View style={styles.overlay} />
 
       <View style={styles.container}>
         <View style={styles.profileCard}>
           <Image
-            source={require("../assets/avatar.jpg")}
+            source={require("../assets/images/l-illustration-de-l-arbre-de-l-anime.jpg")}
             style={styles.avatar}
           />
           <Text style={styles.name}>{userInfos.firstName}</Text>
@@ -83,31 +83,26 @@ export default function Profile({ navigation }) {
 const styles = StyleSheet.create({
   imageBackground: {
     flex: 1,
-    resizeMode: "cover",
-    justifyContent: "center",
   },
 
   overlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0,0,0,0.15)', // overlay moins sombre
+    backgroundColor: 'rgba(0,0,0,0.25)',
   },
 
   container: {
     flex: 1,
     justifyContent: 'center',
-    paddingHorizontal: 25,
+    paddingHorizontal: 20,
   },
 
   profileCard: {
-    backgroundColor: "#fff",
+    backgroundColor: 'rgba(57, 11, 109, 0.27)',
     borderRadius: 20,
     paddingVertical: 40,
     paddingHorizontal: 30,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.3,
-    shadowRadius: 20,
-    elevation: 15,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.3)',
     alignItems: "center",
   },
 
@@ -116,14 +111,14 @@ const styles = StyleSheet.create({
     height: 130,
     borderRadius: 65,
     marginBottom: 25,
-    borderWidth: 3,
-    borderColor: "#4a90e2",
+    borderWidth: 2,
+    borderColor: 'rgba(255,255,255,0.3)',
   },
 
   name: {
-    fontSize: 28,
+    fontSize: 26,
     fontWeight: "700",
-    color: "#333",
+    color: "#fff",
     marginBottom: 30,
     textTransform: "capitalize",
   },
@@ -138,39 +133,36 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginBottom: 15,
     borderBottomWidth: 1,
-    borderBottomColor: "#eee",
+    borderBottomColor: 'rgba(255,255,255,0.3)',
     paddingBottom: 10,
   },
 
   label: {
-    fontSize: 18,
-    color: "#666",
+    fontSize: 16,
+    color: "#fff",
     fontWeight: "600",
   },
 
   value: {
-    fontSize: 18,
-    color: "#222",
+    fontSize: 16,
+    color: "#fff",
     fontWeight: "600",
     textTransform: "capitalize",
   },
 
   logoutButton: {
-    backgroundColor: "#e94e4e",
+    backgroundColor: '',
     paddingVertical: 15,
     paddingHorizontal: 50,
     borderRadius: 30,
-    shadowColor: "#e94e4e",
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.4,
-    shadowRadius: 10,
-    elevation: 8,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.76)',
   },
 
   logoutText: {
     color: "#fff",
-    fontSize: 20,
+    fontSize: 16,
     fontWeight: "700",
-    textAlign: "center",
   },
 });
