@@ -7,13 +7,14 @@ import {
   Platform,
   KeyboardAvoidingView,
   ImageBackground,
-  ScrollView
 } from "react-native";
 import { useState } from "react";
 import Dropdown from "../components/gender";
 import DatePickerWithModal from "../components/SelectDate";
 import { useDispatch } from "react-redux";
 import { login } from "../reducers/user";
+import { LinearGradient } from "expo-linear-gradient";
+import { BlurView } from "expo-blur";
 
 const EMAIL_REGEX =
   /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -21,7 +22,6 @@ const EMAIL_REGEX =
 export default function SignUpScreen({ navigation }) {
   const [errorMessage, setErrorMessage] = useState("");
   const dispatch = useDispatch();
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [gender, setGender] = useState("");
@@ -30,29 +30,26 @@ export default function SignUpScreen({ navigation }) {
   const [firstName, setFirstName] = useState("");
   const [height, setHeight] = useState("");
 
-  const selectGender = (value) => {
-    setGender(value);
-  };
-  const selectBirthday = (value) => {
-    setBirthday(value);
-  };
+  const selectGender = (value) => setGender(value);
+  const selectBirthday = (value) => setBirthday(value);
 
   const handleSubmit = () => {
     if (!EMAIL_REGEX.test(email)) {
       setErrorMessage("Format email incorrect");
       return;
     }
+
     const dataUser = {
-      email: email,
-      password: password,
-      lastName: lastName,
-      firstName: firstName,
-      gender: gender,
-      birthday: birthday,
-      height: height,
+      email,
+      password,
+      lastName,
+      firstName,
+      gender,
+      birthday,
+      height,
     };
-    
-    fetch( `${process.env.EXPO_PUBLIC_URL_VERCEL}/users/signup`, {
+
+    fetch(`${process.env.EXPO_PUBLIC_URL_VERCEL}/users/signup`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(dataUser),
@@ -60,7 +57,7 @@ export default function SignUpScreen({ navigation }) {
       .then((response) => response.json())
       .then((data) => {
         if (data.result) {
-          dispatch(login({ email: email, token: data.token }));
+          dispatch(login({ email, token: data.token }));
           setEmail("");
           setPassword("");
           navigation.navigate("TabNavigator", { screen: "Home" });
@@ -68,52 +65,62 @@ export default function SignUpScreen({ navigation }) {
           setErrorMessage(data.error);
         }
       });
-
   };
 
   return (
     <ImageBackground
-      source={require("../assets/fond1.jpg")}
+      source={require("../assets/images/conception-abstraite-de-lignes-fluides-violettes.jpg")}
       style={styles.background}
     >
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.container}
       >
-          <Text style={{ color: "#fff", fontSize: 40, marginTop: 15 }}>
-            Inscription
-          </Text>
-          <View style={{ borderWidth: 0, borderColor: "#fff" }}>
+        <Text style={styles.title}>Inscription</Text>
+
+        {/* BlurView avec bords arrondis */}
+        <BlurView intensity={80} tint="light" style={styles.blurContainer}>
+          <View style={styles.formBlock}>
             <View style={styles.boxInput}>
               <TextInput
-                placeholder="Prénom : "
-                autoCapitalize="none" // https://reactnative.dev/docs/textinput#autocapitalize
-                onChangeText={(value) => setFirstName(value)}
+                placeholder="Prénom"
+                placeholderTextColor="rgba(255,255,255,0.7)"
+                autoCapitalize="none"
+                onChangeText={setFirstName}
                 value={firstName}
                 style={styles.input}
               />
             </View>
+
             <View style={styles.boxInput}>
               <TextInput
-                placeholder="Nom : "
-                autoCapitalize="none" // https://reactnative.dev/docs/textinput#autocapitalize
-                onChangeText={(value) => setLastName(value)}
+                placeholder="Nom"
+                placeholderTextColor="rgba(255,255,255,0.7)"
+                autoCapitalize="none"
+                onChangeText={setLastName}
                 value={lastName}
                 style={styles.input}
               />
             </View>
+
             <View style={styles.boxInput}>
               <Dropdown selectGender={selectGender} />
             </View>
+
             <View style={styles.boxInput}>
-              <Text style={{ padding: 10 }}>Birthday</Text>
-              <DatePickerWithModal select={selectBirthday} backgroundColor='rgba(255, 255, 255, 0.1)'/>
+              <Text style={{ padding: 10, color: "#fff" }}>Date de naissance</Text>
+              <DatePickerWithModal
+                select={selectBirthday}
+                backgroundColor="rgba(255,255,255,0.1)"
+              />
             </View>
+
             <View style={styles.boxInput}>
               <TextInput
-                placeholder="Taille en cm : "
-                autoCapitalize="none" // https://reactnative.dev/docs/textinput#autocapitalize
-                onChangeText={(value) => setHeight(value)}
+                placeholder="Taille en cm"
+                placeholderTextColor="rgba(255,255,255,0.7)"
+                autoCapitalize="none"
+                onChangeText={setHeight}
                 value={height}
                 style={styles.input}
                 keyboardType="numeric"
@@ -122,67 +129,59 @@ export default function SignUpScreen({ navigation }) {
 
             <View style={styles.boxInput}>
               <TextInput
-                placeholder="Email : "
-                autoCapitalize="none" // https://reactnative.dev/docs/textinput#autocapitalize
-                keyboardType="email-address" // https://reactnative.dev/docs/textinput#keyboardtype
-                textContentType="emailAddress" // https://reactnative.dev/docs/textinput#textcontenttype-ios
-                autoComplete="email" // https://reactnative.dev/docs/textinput#autocomplete-android
-                onChangeText={(value) => setEmail(value)}
+                placeholder="Email"
+                placeholderTextColor="rgba(255,255,255,0.7)"
+                autoCapitalize="none"
+                keyboardType="email-address"
+                textContentType="emailAddress"
+                autoComplete="email"
+                onChangeText={setEmail}
                 value={email}
                 style={styles.input}
               />
             </View>
+
             <View style={styles.boxInput}>
               <TextInput
-                placeholder="Password : "
-                autoCapitalize="none" // https://reactnative.dev/docs/textinput#autocapitalize
-                onChangeText={(value) => setPassword(value)}
+                placeholder="Password"
+                placeholderTextColor="rgba(255,255,255,0.7)"
+                autoCapitalize="none"
+                onChangeText={setPassword}
                 value={password}
                 style={styles.input}
                 secureTextEntry={true}
               />
             </View>
+
             {errorMessage !== "" && (
-              <Text
-                style={{
-                  color: "red",
-                  textAlign: "center",
-                  marginVertical: 10,
-                }}
-              >
-                {errorMessage}
-              </Text>
+              <Text style={styles.error}>{errorMessage}</Text>
             )}
-          </View>
-          <View
-            style={{
-              borderWidth: 0,
-              borderColor: "#fff",
-              width: "80%",
-              marginTop: 20,
-              margin:'auto',
-            }}
-          >
+
             <TouchableOpacity
-              onPress={() => handleSubmit()}
-              style={styles.button}
+              onPress={handleSubmit}
               activeOpacity={0.8}
+              style={{ width: "100%" }}
             >
-              <Text style={styles.textButton}>S'inscrire</Text>
+              <LinearGradient
+                colors={["#A75DD8", "#6B3462"]}
+                start={[0, 0]}
+                end={[1, 1]}
+                style={styles.primaryButton}
+              >
+                <Text style={styles.primaryButtonText}>S'inscrire</Text>
+              </LinearGradient>
             </TouchableOpacity>
 
             <TouchableOpacity
               onPress={() => navigation.navigate("SignIn")}
-              style={styles.button}
-              activeOpacity={0.8}
+              activeOpacity={0.7}
             >
-              <Text style={styles.textButton}>Annuler</Text>
+              <Text style={styles.secondaryText}>
+                Déjà un compte ? Connexion
+              </Text>
             </TouchableOpacity>
           </View>
-          <View style={styles.sso}>
-            <Text>SSO A VOIR APRES</Text>
-          </View>
-        
+        </BlurView>
       </KeyboardAvoidingView>
     </ImageBackground>
   );
@@ -190,51 +189,76 @@ export default function SignUpScreen({ navigation }) {
 
 const styles = StyleSheet.create({
   background: {
+    flex: 1,
     width: "100%",
     height: "100%",
-    borderColor: "red",
-    borderWidth: 0,
+    resizeMode: "cover",
   },
-
   container: {
     flex: 1,
-    alignItems: "center",
-    borderColor: "red",
-    borderWidth: 0,
+    justifyContent: "center",
+    paddingHorizontal: 20,
   },
-  button: {
-    alignItems: "center",
-    paddingTop: 8,
-    backgroundColor: "#6b3462",
-    borderRadius: 10,
-    margin: 10,
-    width:'100%'
-  },
-  textButton: {
-    height: 30,
-    fontWeight: "400",
-    fontSize: 20,
+  title: {
+    fontSize: 36,
+    fontWeight: "700",
     color: "#fff",
+    marginBottom: 5,
+    marginTop: 15,
+    textAlign: "center",
   },
-  input: {
+  blurContainer: {
     width: "100%",
-    fontSize: 16,
-    color: "#000",
+    borderRadius: 25, 
+    overflow: "hidden", 
+    backgroundColor: "rgba(255,255,255,0.1)", 
+    padding: 20,
+    marginVertical: 10,
+  },
+  formBlock: {
+    width: "100%",
+    alignItems: "center",
+    gap: 12,
   },
   boxInput: {
-    borderColor: "#fff",
-    borderWidth: 0,
-    backgroundColor: "rgba(255,255,255,.8)",
-    borderRadius: 20,
-    marginTop: 15,
-    marginLeft: 20,
-    marginRight: 20,
+    width: "100%",
+    backgroundColor: "rgba(255,255,255,0.15)",
+    borderRadius: 15,
+    paddingHorizontal: 15,
+    paddingVertical: Platform.OS === "ios" ? 12 : 8,
   },
-  sso: {
-    marginTop: 20,
+  input: {
+    fontSize: 18,
+    color: "#fff",
+  },
+  primaryButton: {
+    borderRadius: 35,
+    paddingVertical: 12,
+    marginHorizontal: 12,
     alignItems: "center",
-    backgroundColor: "#fff",
-    padding: 50,
-    borderRadius: 10,
+    marginVertical: 15,
+    shadowColor: "#7A42C0",
+    shadowOpacity: 0.35,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 8 },
+    elevation: 5,
+  },
+  primaryButtonText: {
+    color: "#fff",
+    fontSize: 20,
+    fontWeight: "700",
+    letterSpacing: 1,
+  },
+  secondaryText: {
+    color: "rgba(255,255,255,0.7)",
+    fontSize: 16,
+    textAlign: "center",
+    marginTop: 10,
+    textDecorationLine: "underline",
+  },
+  error: {
+    color: "red",
+    textAlign: "center",
+    marginVertical: 5,
   },
 });

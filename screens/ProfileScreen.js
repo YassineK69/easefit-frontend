@@ -157,7 +157,7 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.76)',
+    borderColor: '#DA341B',
   },
 
   logoutText: {
