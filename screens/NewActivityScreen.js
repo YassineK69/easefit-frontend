@@ -9,13 +9,13 @@ import {
   Platform,
   Keyboard,
   TouchableWithoutFeedback,
-  ScrollView
-} from 'react-native';
-import { useState } from 'react';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
+  ScrollView,
+} from "react-native";
+import { useState } from "react";
+import FontAwesome from "react-native-vector-icons/FontAwesome";
 import { useDispatch, useSelector } from "react-redux";
-import { addNewActivity } from '../reducers/activities';
-import * as ImagePicker from 'expo-image-picker';
+import { addNewActivity } from "../reducers/activities";
+import * as ImagePicker from "expo-image-picker";
 
 import Dropdown from "../components/sporttype";
 import ActivityDateModal from "../components/activitydate";
@@ -24,10 +24,10 @@ import ActivityDurationModal from "../components/activityduration";
 export default function NewActivityScreen({ navigation }) {
   const dispatch = useDispatch();
   const token = useSelector((state) => state.user.value.token);
-
-  const [activityTitle, setActivityTitle] = useState('');
-  const [activityDuration, setActivityDuration] = useState('');
-  const [activityComment, setActivityComment] = useState('');
+  const [errorMessage, setErrorMessage] = useState("");
+  const [activityTitle, setActivityTitle] = useState("");
+  const [activityDuration, setActivityDuration] = useState("");
+  const [activityComment, setActivityComment] = useState("");
   const [activityType, setActivityType] = useState(null);
   const [activityDate, setActivityDate] = useState(new Date());
   const [activityGrade, setActivityGrade] = useState(0);
@@ -35,19 +35,20 @@ export default function NewActivityScreen({ navigation }) {
   const [activityImageName, setActivityImageName] = useState(null);
 
   const resetForm = () => {
-    setActivityTitle('');
-    setActivityType('');
+    setActivityTitle("");
+    setActivityType("");
     setActivityDate(new Date());
     setActivityDuration(30);
-    setActivityGrade('');
-    setActivityComment('');
+    setActivityGrade("");
+    setActivityComment("");
     setActivityImageUri(null);
     setActivityImageName(null);
   };
 
   const handleGallery = async () => {
-    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (permissionResult.status !== 'granted') {
+    const permissionResult =
+      await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (permissionResult.status !== "granted") {
       alert("Permission d'accéder à la galerie refusée !");
       return;
     }
@@ -71,7 +72,17 @@ export default function NewActivityScreen({ navigation }) {
   };
 
   const handleRegister = () => {
-    if (!activityTitle || !activityType || !activityDuration || !activityDate || !activityGrade) return;
+    if (
+      !activityTitle ||
+      !activityType ||
+      !activityDuration ||
+      !activityDate ||
+      !activityGrade
+    ){
+      setErrorMessage("Des champs n'ont pas été complétés");
+      return;
+    }
+      
 
     const formData = new FormData();
     formData.append("title", activityTitle);
@@ -89,18 +100,22 @@ export default function NewActivityScreen({ navigation }) {
       });
     }
 
-    fetch(`${process.env.EXPO_PUBLIC_URL_VERCEL}/activities/newactivity/${token}`, {
-      method: 'POST',
-      body: formData,
-    })
-      .then(response => response.json())
-      .then(data => {
+    fetch(
+      `${process.env.EXPO_PUBLIC_URL_VERCEL}/activities/newactivity/${token}`,
+      {
+        method: "POST",
+        body: formData,
+      }
+    )
+      .then((response) => response.json())
+      .then((data) => {
         if (data.result) {
           dispatch(addNewActivity(data.newActivity));
           resetForm();
-          navigation.navigate('TabNavigator', { screen: 'Home' });
+          navigation.navigate("TabNavigator", { screen: "Home" });
         } else {
-          console.error('Erreur lors de l’enregistrement', data);
+          setErrorMessage(data.error);
+          console.log("data" , data)
         }
       });
   };
@@ -110,27 +125,27 @@ export default function NewActivityScreen({ navigation }) {
   };
 
   const handleCommentKeyPress = ({ nativeEvent }) => {
-    if (nativeEvent.key === 'Enter') {
+    if (nativeEvent.key === "Enter") {
       Keyboard.dismiss();
     }
   };
 
   const handleCommentChange = (text) => {
-    const filteredText = text.replace(/[\n\r]/g, '');
+    const filteredText = text.replace(/[\n\r]/g, "");
     setActivityComment(filteredText);
   };
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <ImageBackground
-        source={require('../assets/fondnewactivity.jpg')}
+        source={require("../assets/fondnewactivity.jpg")}
         style={styles.background}
         blurRadius={2}
       >
         <View style={styles.overlay} />
 
         <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
           style={styles.container}
         >
           <View style={styles.card}>
@@ -140,7 +155,7 @@ export default function NewActivityScreen({ navigation }) {
             <View style={styles.inputGroup}>
               <Text style={styles.label}>Titre</Text>
               <TextInput
-                placeholder='Activité du jour'
+                placeholder="Activité du jour"
                 placeholderTextColor="rgba(255,255,255,0.6)"
                 style={styles.input}
                 onChangeText={setActivityTitle}
@@ -157,23 +172,33 @@ export default function NewActivityScreen({ navigation }) {
             {/* Durée */}
             <View style={styles.inputGroup}>
               <Text style={styles.label}>Durée</Text>
-              <ActivityDurationModal selectActivityDuration={setActivityDuration} />
+              <ActivityDurationModal
+                selectActivityDuration={setActivityDuration}
+              />
             </View>
 
             {/* Date */}
             <View style={styles.inputGroup}>
               <Text style={styles.label}>Date</Text>
-              <ActivityDateModal selectedDate={activityDate} selectActivityDate={setActivityDate} />
+              <ActivityDateModal
+                selectedDate={activityDate}
+                selectActivityDate={setActivityDate}
+              />
             </View>
 
             {/* Upload */}
             <View style={styles.inputGroup}>
               <Text style={styles.label}>Photos/Vidéos</Text>
-              <TouchableOpacity style={styles.fakeInput} onPress={handleGallery}>
-                <FontAwesome name='upload' size={22} color='#fff' />
+              <TouchableOpacity
+                style={styles.fakeInput}
+                onPress={handleGallery}
+              >
+                <FontAwesome name="upload" size={22} color="#fff" />
               </TouchableOpacity>
               {activityImageName && (
-                <Text style={{ color: 'white', marginTop: 5 }}>{activityImageName}</Text>
+                <Text style={{ color: "white", marginTop: 5 }}>
+                  {activityImageName}
+                </Text>
               )}
             </View>
 
@@ -183,7 +208,7 @@ export default function NewActivityScreen({ navigation }) {
               keyboardShouldPersistTaps="handled"
             >
               <TextInput
-                placeholder='Mes impressions...'
+                placeholder="Mes impressions..."
                 placeholderTextColor="rgba(255,255,255,0.6)"
                 multiline
                 style={styles.comment}
@@ -198,22 +223,38 @@ export default function NewActivityScreen({ navigation }) {
             {/* Étoiles */}
             <View style={styles.grade}>
               {[...Array(5)].map((_, index) => (
-                <TouchableOpacity key={index} onPress={() => handleStarPress(index)}>
+                <TouchableOpacity
+                  key={index}
+                  onPress={() => handleStarPress(index)}
+                >
                   <FontAwesome
-                    name={index < activityGrade ? 'star' : 'star-o'}
+                    name={index < activityGrade ? "star" : "star-o"}
                     size={35}
-                    color={index < activityGrade ? '#FFD700' : '#888'}
+                    color={index < activityGrade ? "#FFD700" : "#888"}
                     style={styles.star}
                   />
                 </TouchableOpacity>
               ))}
             </View>
-
+            {/* Message d'erreur éventuel */}
+            {errorMessage !== "" && (
+              <Text
+                style={{
+                  color: "red",
+                  textAlign: "center",
+                  marginVertical: 10,
+                }}
+              >
+                {errorMessage}
+              </Text>
+            )} 
             {/* Boutons */}
             <View style={styles.buttons}>
               <TouchableOpacity
                 style={[styles.button, styles.cancelBtn]}
-                onPress={() => navigation.navigate('TabNavigator', { screen: 'Home' })}
+                onPress={() =>
+                  navigation.navigate("TabNavigator", { screen: "Home" })
+                }
               >
                 <Text style={styles.cancelText}>Annuler</Text>
               </TouchableOpacity>
@@ -237,121 +278,121 @@ const styles = StyleSheet.create({
   },
   overlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0,0,0,0.25)',
+    backgroundColor: "rgba(0,0,0,0.25)",
   },
   container: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: "center",
     padding: 20,
   },
   card: {
-    backgroundColor: 'rgba(255,255,255,0.15)',
+    backgroundColor: "rgba(255,255,255,0.15)",
     borderRadius: 20,
     padding: 20,
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.3)',
+    borderColor: "rgba(255,255,255,0.3)",
   },
   title: {
     fontSize: 26,
-    fontWeight: '700',
-    color: '#fff',
-    textAlign: 'center',
+    fontWeight: "700",
+    color: "#fff",
+    textAlign: "center",
     marginBottom: 25,
   },
   inputGroup: {
     marginBottom: 15,
   },
   label: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 16,
     marginBottom: 6,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   input: {
-    backgroundColor: 'rgba(255,255,255,0.1)',
+    backgroundColor: "rgba(255,255,255,0.1)",
     borderRadius: 10,
     paddingHorizontal: 12,
     paddingVertical: 10,
-    color: '#fff',
+    color: "#fff",
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.3)',
+    borderColor: "rgba(255,255,255,0.3)",
   },
   fakeInput: {
     height: 45,
     borderRadius: 10,
-    backgroundColor: 'rgba(255,255,255,0.1)',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "rgba(255,255,255,0.1)",
+    justifyContent: "center",
+    alignItems: "center",
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.3)',
+    borderColor: "rgba(255,255,255,0.3)",
   },
   comment: {
-    backgroundColor: 'rgba(255,255,255,0.1)',
+    backgroundColor: "rgba(255,255,255,0.1)",
     borderRadius: 10,
     padding: 12,
-    color: '#fff',
+    color: "#fff",
     minHeight: 90,
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.3)',
-    textAlignVertical: 'top',
+    borderColor: "rgba(255,255,255,0.3)",
+    textAlignVertical: "top",
   },
   grade: {
-    flexDirection: 'row',
-    justifyContent: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
     marginBottom: 20,
   },
   star: {
     marginHorizontal: 6,
   },
   buttons: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
   button: {
     flex: 1,
     paddingVertical: 12,
     borderRadius: 30,
-    alignItems: 'center',
+    alignItems: "center",
     marginHorizontal: 5,
   },
   cancelBtn: {
-    backgroundColor: 'rgba(255,255,255,0.2)',
+    backgroundColor: "rgba(255,255,255,0.2)",
     borderWidth: 1,
-    borderColor: '#fff',
+    borderColor: "#fff",
   },
   saveBtn: {
-    backgroundColor: '#4a90e2',
+    backgroundColor: "#4a90e2",
   },
   cancelText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   btn: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
+    flexDirection: "row",
+    justifyContent: "space-around",
     marginVertical: 30,
     paddingHorizontal: 20,
   },
   secondaryButton: {
-    backgroundColor: 'white',
+    backgroundColor: "white",
     borderRadius: 8,
     width: 145,
     height: 40,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     marginHorizontal: 5,
-    borderColor: '#6B3462',
+    borderColor: "#6B3462",
     borderWidth: 1,
   },
   textButton: {
-    color: 'black',
+    color: "black",
     fontSize: 20,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   saveText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 16,
-    fontWeight: '700',
+    fontWeight: "700",
   },
 });

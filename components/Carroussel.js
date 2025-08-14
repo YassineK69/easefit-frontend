@@ -25,7 +25,6 @@ export default function Carroussel(props) {
     return newObj;
   })
   data.unshift({ id: 0})
-  console.log(data)
 
   const ref = useRef(null);
   const progress = useSharedValue(0);

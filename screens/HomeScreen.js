@@ -25,7 +25,6 @@ export default function HomeScreen({ navigation }) {
 
   // Chargement des activités
   const dataActivities = useSelector((state) => state.activities.value);
-
   useEffect(() => {
     formatAndSetCalendar(dataActivities);
   }, [token]);
@@ -55,9 +54,10 @@ export default function HomeScreen({ navigation }) {
         title: act.title || "Sans titre",
         duration: act.duration || 0,
         rating: act.grade || 0,
-        description: act.comment || "Pas de description",
+        comment: act.comment || "Pas de description",
         type: act.type || "",
         activitiesPic:act.activitiesPic,
+        idActivity: act._id,
       };
     });
     if (!newMarkedDates[today]) {
