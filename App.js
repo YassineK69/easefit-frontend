@@ -34,36 +34,41 @@ const TabNavigator = () => {
             return (
               <Image
                 source={require('./assets/images/logo3.png')}
-                style={{
-                  width: 100,
-                  height: 100,
-                  tintColor: color,
-                  resizeMode: 'contain',
-                  paddingTop:20,
-                }}
-              />
+                style={{ width: 100, height: 100, tintColor: color, resizeMode: 'contain', paddingTop:20 }} />
             );
           } else if (route.name === 'Profile') {
-            return <FontAwesome name="user" size={size} color={color} />;
+              return <FontAwesome name="user" size={size} color={color} />;
+          } else if (route.name === 'Graphs'){
+              return <FontAwesome name="bar-chart-o" size={size} color={color} />;
           }
+        },
+         tabBarStyle: {
+          backgroundColor: 'transparent', 
+          borderTopWidth: 0,
+          elevation: 0, 
+          height: 90,
+        },
+        tabBarLabelStyle: {
+          fontSize: 14,
         },
         tabBarActiveTintColor: '#ec6e5b',
         tabBarInactiveTintColor: '#335561',
         headerShown: false,
-      // NE  PAS mettre tabBarStyle ICI car  s'applique à tous les écrans
       })}
     >
+      <Tab.Screen
+        name="Graphs"
+        component={GraphsScreen}
+        options={
+          {
+            tabBarBackground: () => <CustomTabBarBackground />,
+          } // voir si integration d'un background tabbar ou laisser blanc 
+        }
+      />
       <Tab.Screen
         name="Home"
         component={HomeScreen}
         options={{
-          tabBarStyle: {
-            backgroundColor: '#7333a0ff',
-            borderTopLeftRadius: 20,
-            borderTopRightRadius: 20,
-            height: 75,
-            // modifie le style de TabNav sur la page home 
-          },
           tabBarBackground: () => <CustomTabBarBackground />,
         }}
       />
@@ -85,7 +90,6 @@ export default function App() {
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           <Stack.Screen name="SignIn" component={SignInScreen} />
           <Stack.Screen name="SignUp" component={SignUpScreen} />
-          <Stack.Screen name="Graphs" component={GraphsScreen} />
           <Stack.Screen name="NewActivity" component={NewActivityScreen} />
           <Stack.Screen name="List" component={ListScreen} />
           <Stack.Screen name="TabNavigator" component={TabNavigator} />

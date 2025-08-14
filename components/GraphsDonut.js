@@ -108,6 +108,7 @@ export default function GraphDonut(props) {
 
   const legend = activities.map((type, i) => {
     return (
+      <View>
       <TouchableOpacity
         key={i}
         style={{
@@ -115,19 +116,19 @@ export default function GraphDonut(props) {
           alignItems: "center",
           marginTop: 4,
           justifyContent: "center",
-          padding: 4,
-          width:"48%"
+          paddingTop: 25,
         }}
         onPress={() => setSelectActivity(i)}
       >
         <FontAwesome
           name="circle"
-          size={20}
+          size={15}
           color={appColors[type]}
           style={{ marginLeft: 0 }}
         />
-        <Text> : {type}</Text>
+        <Text> {type}</Text>
       </TouchableOpacity>
+      </View>
     );
   });
 
@@ -136,14 +137,11 @@ export default function GraphDonut(props) {
       style={{
         height: 400,
         width: "100%",
-        borderWidth: 1,
-        margin: "auto",
         marginTop: 30,
         backgroundColor: "#fff",
-        borderRadius: 2,
       }}
     >
-      <View style={{ margin: 10, borderWidth: 1, borderColor: "#aaa" }}>
+      <View style={{ margin: 20 }}>
         <View
           style={{
             flexDirection: "row",
@@ -151,28 +149,28 @@ export default function GraphDonut(props) {
             width: "100%",
           }}
         >
-          <TouchableOpacity
+          <TouchableOpacity 
             style={[
-              styles.selectDonut,
+              {width : 120, borderRadius: 8, marginHorizontal: 16, shadowColor: "#7b46f6", shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.2, shadowRadius: 8, elevation: 5},
               selectDonut
-                ? { backgroundColor: "rgba(112, 53, 97, 0.8)" }
-                : { backgroundColor: "rgba(112, 53, 97, 0.2)" },
+                ? { backgroundColor: "#6B3462" }
+                : { backgroundColor: "white" }
             ]}
             onPress={() => setSelectDonut(true)}
-          >
-            <Text style={{ margin: "auto", color: "#fff",padding:3, fontSize:18 }}>NOMBRE</Text>
+>
+            <Text style={{ margin: "auto", paddingVertical: 3, fontSize: 16, color: selectDonut ? "white" : "#6B3462"}}>
+              NOMBRE
+            </Text>
           </TouchableOpacity>
-
           <TouchableOpacity
             style={[
-              styles.selectDonut,
+              {width : 120, borderRadius: 8, marginHorizontal: 16, shadowColor: "#7b46f6", shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.2, shadowRadius: 8, elevation: 5},
               !selectDonut
-                ? { backgroundColor: "rgba(112, 53, 97, 0.8)" }
-                : { backgroundColor: "rgba(112, 53, 97, 0.2)" },
+                ? { backgroundColor: "#6B3462" }
+                : { backgroundColor: "white" },
             ]}
-            onPress={() => setSelectDonut(false)}
-          >
-            <Text style={{ margin: "auto", color: "#fff",padding:3, fontSize:18 }}>DUREE</Text>
+            onPress={() => setSelectDonut(false)}>
+            <Text style={{ margin: "auto", paddingVertical: 3, fontSize: 16, color: selectDonut ? "#6B3462" : "white" }}>DUREE</Text>
           </TouchableOpacity>
         </View>
         <View
@@ -186,21 +184,20 @@ export default function GraphDonut(props) {
           {legend}
         </View>
       </View>
+      
       <PolarChart
         data={DATA}
         colorKey={"color"}
         valueKey={"value"}
         labelKey={"label"}
         containerStyle={{
-          borderColor: "#f00",
-          padding: 5,
+          padding: 20,
           margin: 5,
-          borderWidth: 0,
           color: "#000",
+          justifyContent : 'center',
         }}
-        canvasStyle={{ borderWidth: 1, color: "#000", padding: 10 }}
       >
-        <Pie.Chart innerRadius={"40%"}>
+        <Pie.Chart innerRadius={"50%"}>
           {({ slice }) => {
             const { startX, startY, endX, endY } = calculateGradientPoints(
               slice.radius,
@@ -236,15 +233,16 @@ export default function GraphDonut(props) {
       <Text
         style={{
           margin: 10,
+          marginBottom : 20,
           borderWidth: 0,
           borderColor: "#000",
-          margin: "auto",
           fontSize: 20,
+          alignSelf : 'center',
         }}
       >
         {result}
         <Text style={{ color: appColors[activities[selectActivity]] }}>
-          {activities[selectActivity].toUpperCase()}
+          {activities[selectActivity]}
         </Text>
       </Text>
     </View>
@@ -254,8 +252,8 @@ export default function GraphDonut(props) {
 const styles = StyleSheet.create({
   selectDonut: {
     width: "45%",
-    padding: 3,
-    margin: 2,
-    borderRadius: 8,
+    padding: 2,
+    margin: 3,
+    borderRadius: 10,
   },
 });

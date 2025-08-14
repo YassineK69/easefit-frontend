@@ -1,4 +1,3 @@
-
   import {
   StyleSheet,
   Text,
@@ -43,90 +42,60 @@ export default function GraphsScreen({ navigation }) {
     viewFilter && setEnd(null);
   };
   return (
-    <LinearGradient
-      colors={["#703561", "#d5341e"]}
-      start={{ x: 0.8, y: 0.3 }}
-      end={{ x: 0.8, y: 1 }}
-      style={styles.background}
-    >
+      <View style={styles.background}>
       <SafeAreaView style={styles.container}>
+
         <View style={styles.topContainer}>
-          <TouchableOpacity
-            onPress={() =>
-              navigation.navigate("TabNavigator", { screen: "Home" })
-            }
-            style={{ borderWidth: 0 }}
-          >
-            <FontAwesome
-              name="caret-left"
-              size={50}
-              color="#fff"
-              style={{ margin: 10 }}
+          {/* Zone gauche vide pour équilibrer */}
+          <View style={styles.side} />
+
+          {/* Zone centre */}
+          <View style={styles.center}>
+            <Image
+              source={require("../assets/newlogoorange.png")}
+              style={styles.image}
             />
-          </TouchableOpacity>
-          <Image
-            source={require("../assets/whitelogo.png")}
-            style={styles.image}
-          />
-          <View style={{}}>
-            <TouchableOpacity onPress={handdleFilter}>
-              <FontAwesome
-                name="filter"
-                size={35}
-                color={!viewFilter ? "#fff" : "#888"}
-                style={{ margin: 15 }}
-              />
+          </View>
+
+          {/* Zone droite */}
+          <View style={styles.side}>
+            <TouchableOpacity onPress={handdleFilter} style={{ alignSelf: "flex-end" }}>
+              <FontAwesome name="filter" size={20} color="#DA341B" />
             </TouchableOpacity>
           </View>
         </View>
+
         {viewFilter && (
-          <View
-            style={{
-              borderColor: "#fff",
-              flexDirection: "row",
-              borderWidth: 0,
-              justifyContent: "space-between",
-              width: "100%",
-              padding: 5,
-            }}
-          >
-            <View
-              style={{
-                borderColor: "#fff",
-                flexDirection: "row",
-                borderWidth: 0,
-              }}
-            >
-              <Text style={{ padding: 10, color: "#fff" }}>Entre le :</Text>
-              <DatePickerWithModal
-                select={selectStart}
-                backgroundColor="rgba(255, 255, 255, 0.5)"
-              />
+            <View style={styles.filtersContainer}>
+              <View style={styles.filterGroup}>
+                <Text style={styles.filterLabel}>Entre le :</Text>
+                <View>
+                  <DatePickerWithModal select={selectStart} />
+                </View>
+              </View>
+              <View style={styles.filterGroup}>
+                <Text style={styles.filterLabel}> et :</Text>
+                <View>
+                  <DatePickerWithModal select={selectEnd} />
+                </View>
+              </View>
             </View>
-            <View
-              style={{
-                borderColor: "#fff",
-                flexDirection: "row",
-                borderWidth: 0,
-              }}
-            >
-              <Text style={{ padding: 10, color: "#fff" }}>et :</Text>
-              <DatePickerWithModal
-                select={selectEnd}
-                backgroundColor="rgba(255, 255, 255, 0.5)"
-              />
-            </View>
-          </View>
-        )}
+          )}
 
         <ScrollView style={{ width: "100%" }}>
-          <GraphsDonut start={start} end={end} />
-          <GraphsDurationBar start={start} end={end} />
-          <GraphsStars start={start} end={end} />
+            <View style={styles.card}>
+                <GraphsDonut start={start} end={end} />
+            </View>
+            <View style={styles.card}>
+                <GraphsDurationBar start={start} end={end} />
+            </View>
+            <View style={styles.card}>
+                <GraphsStars start={start} end={end} />
+            </View>
 
         </ScrollView>
       </SafeAreaView>
-    </LinearGradient>
+      </View>
   );
 }
 
@@ -155,18 +124,50 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   image: {
-    width: 100,
-    height: 100,
-    margin: 10,
-  },
+  width: 80,
+  height: 80, // beaucoup plus bas
+  resizeMode: "contain",
+},
   topContainer: {
     flexDirection: "row",
-    borderBottomWidth: 1,
-    borderColor: "#fff",
-    width: "100%",
-    justifyContent: "space-between",
-    alignItems: "flex-end",
-    marginTop: 30,
-    marginBottom:0,
+    alignItems: "stretch", // permet aux côtés de prendre toute la hauteur
+    marginTop: 20,
+    marginBottom : 10
+  },
+  side: {
+    width: 50,
+    alignItems: "center",
+    justifyContent: "flex-end", // ça pousse le contenu vers le bas
+    marginRight : 20,
+  },
+  center: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center", // logo centré verticalement
+  },
+  filtersContainer: {
+    flexDirection: "row",   
+    justifyContent: "flex-end", 
+    width: "100%",          
+    padding: 10,
+    marginRight : 20,
+  },
+  filterGroup: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginLeft: 10, 
+  },
+  filterLabel: {
+    color: "black",
+    paddingRight: 5,
+  },
+  card: {
+    borderRadius: 15,
+    marginHorizontal: 16,
+    shadowColor: "#7b46f6",
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    elevation: 5,
   },
 });

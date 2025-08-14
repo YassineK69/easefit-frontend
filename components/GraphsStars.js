@@ -88,21 +88,19 @@ export default function GraphsStars(props) {
           flexDirection: "row",
           alignItems: "center",
           marginTop: 4,
+          marginBottom : 4,
           justifyContent: "center",
-          borderWidth: 0,
-          borderColor: "rgba(0,0,0,0.5)",
-          padding: 8,
-          width: "48%",
+          width:"48%",
         }}
         onPress={() => setSelectActivity(i)}
       >
         <FontAwesome
           name="circle"
-          size={20}
+          size={15}
           color={appColors[type]}
           style={{ marginLeft: 0 }}
         />
-        <Text> : {type}</Text>
+        <Text> {type}</Text>
       </TouchableOpacity>
     );
   });
@@ -117,9 +115,9 @@ export default function GraphsStars(props) {
       <FontAwesome
         key={i}
         name="star"
-        size={30}
+        size={22}
         color={couleur}
-        style={{ padding: 4 }}
+        style={{ padding: 4}}
       />
     );
     stars.push(star);
@@ -130,15 +128,12 @@ export default function GraphsStars(props) {
       style={{
         height: 450,
         width: "100%",
-        borderWidth: 1,
-        margin: "auto",
         marginTop: 30,
-        marginBottom: 50,
+        marginBottom: 30,
         backgroundColor: "#fff",
-        borderRadius: 2,
       }}
     >
-      <View style={{ margin: 10, borderWidth: 1, borderColor: "#aaa" }}>
+      <View style={{ margin: 10 }}>
         <View
           style={{
             flexDirection: "row",
@@ -146,7 +141,7 @@ export default function GraphsStars(props) {
             width: "100%",
           }}
         >
-          <Text style={{ fontSize: 20 }}>NOTATION DES ACTIVITES</Text>
+          <Text style={{ fontSize: 18, paddingVertical: 10 }}>NOTATION DES ACTIVITES</Text>
         </View>
         <View
           style={{
@@ -156,6 +151,7 @@ export default function GraphsStars(props) {
             borderWidth: 0,
             width: "100%",
             flexWrap: "wrap",
+            marginBottom : 10,
           }}
         >
           {legend}
@@ -210,31 +206,28 @@ export default function GraphsStars(props) {
       <View
         style={{
           flexDirection: "column",
-          padding: 5,
+          // padding: 5,
           borderWidth: 0,
           borderColor: "#000",
-          margin: "auto",
-          fontSize: 20,
           width: "100%",
+          alignItems: "center", // <-- centre les enfants horizontalement
         }}
       >
         <Text
           style={{
             color: appColors[activitiesWidthTotal[selectActivity]],
-            fontSize: 22,
-            margin: "auto",
+            fontSize: 20, 
+            marginTop: 15,
+            paddingBottom : 5,
+            textAlign: "center", // <-- utile pour le texte multi-lignes
           }}
         >
-          {valeurs.grade && `${affichage[valeurs.grade - 1].count} activités `}
-          {activitiesWidthTotal[selectActivity] !== "TOTAL" &&
-            activitiesWidthTotal[selectActivity].toUpperCase()}
-          {activitiesWidthTotal[selectActivity] === "TOTAL" && "au TOTAL"}
+        {valeurs.grade && `${affichage[valeurs.grade - 1].count} activités `}
+        {activitiesWidthTotal[selectActivity] === "TOTAL" && "TOTAL"}
         </Text>
-        <Text style={{ fontSize: 20, margin: "auto" }}>
-          {valeurs.grade   && stars}
-
-          {!valeurs.grade && `PRESSEZ sur une barre `}
-        </Text>
+          <Text style={{ fontSize: 20, textAlign: "center", paddingBottom : 10 }}>
+            {valeurs.grade && stars}
+          </Text>
       </View>
     </View>
   );
