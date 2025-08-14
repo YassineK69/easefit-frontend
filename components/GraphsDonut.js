@@ -108,9 +108,8 @@ export default function GraphDonut(props) {
 
   const legend = activities.map((type, i) => {
     return (
-      <View>
+      <View key={i}>
       <TouchableOpacity
-        key={i}
         style={{
           flexDirection: "row",
           alignItems: "center",
@@ -156,12 +155,12 @@ export default function GraphDonut(props) {
                 ? { backgroundColor: "#6B3462" }
                 : { backgroundColor: "white" }
             ]}
-            onPress={() => setSelectDonut(true)}
->
+            onPress={() => setSelectDonut(true)}>
             <Text style={{ margin: "auto", paddingVertical: 3, fontSize: 16, color: selectDonut ? "white" : "#6B3462"}}>
               NOMBRE
             </Text>
           </TouchableOpacity>
+
           <TouchableOpacity
             style={[
               {width : 120, borderRadius: 8, marginHorizontal: 16, shadowColor: "#7b46f6", shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.2, shadowRadius: 8, elevation: 5},
@@ -191,8 +190,6 @@ export default function GraphDonut(props) {
         valueKey={"value"}
         labelKey={"label"}
         containerStyle={{
-          padding: 20,
-          margin: 5,
           color: "#000",
           justifyContent : 'center',
         }}
@@ -232,7 +229,7 @@ export default function GraphDonut(props) {
 
       <Text
         style={{
-          margin: 10,
+          marginTop : 10,
           marginBottom : 20,
           borderWidth: 0,
           borderColor: "#000",

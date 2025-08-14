@@ -1,5 +1,5 @@
-import  { useState , useEffect } from "react";
-import { StyleSheet } from "react-native";
+import { useState, useEffect } from "react";
+import { StyleSheet, Platform } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 
 const Dropdown = (props) => {
@@ -10,13 +10,10 @@ const Dropdown = (props) => {
     { label: "Femme", value: "F" },
     { label: "Non renseigné", value: "N" },
   ]);
-  
-  
 
   useEffect(() => {
     props.selectGender(value);
   }, [value]);
-
 
   return (
     <DropDownPicker
@@ -26,34 +23,17 @@ const Dropdown = (props) => {
       setOpen={setOpen}
       setValue={setValue}
       setItems={setItems}
-      placeholder="Genre"
-      style={styles.liste}
-      textStyle={{
-        color: "#000",
-        fontSize: 16,
-      }}
-      dropDownContainerStyle={{
-        flex:1,
-        backgroundColor: "rgba(255,255,255,.9)",
-        borderColor: "rgba(255,255,255,.8)",
-        width:'60%',
-        position:'absolute',
-        margin:1,
-        borderRadius:10,
-        right:0,
-      }}
-      listItemContainerStyle={{
-        borderBottomColor: "#444",
-        borderBottomWidth: 0.5,
-        color:"#fff",
-      }}
-      selectedItemLabelStyle={{
-        fontWeight: "bold",
-        color: "#d868c4",
-      }}
-      placeholderStyle={{
-        color: "#000",
-      }}
+      placeholder="Sélectionner le genre"
+      style={styles.dropdown}
+      textStyle={styles.text}
+      dropDownContainerStyle={styles.dropdownContainer}
+      listItemContainerStyle={styles.listItem}
+      selectedItemLabelStyle={styles.selectedItem}
+      placeholderStyle={styles.placeholder}
+      arrowIconStyle={{ tintColor: "#fff" }}
+      tickIconStyle={{ tintColor: "#fff" }}
+      zIndex={1000}
+      zIndexInverse={1000}
     />
   );
 };
@@ -61,10 +41,31 @@ const Dropdown = (props) => {
 export default Dropdown;
 
 const styles = StyleSheet.create({
-  liste: {
-    borderWidth: 0,
-    color:'#000',
-    backgroundColor: "rgba(255,255,255,0)",
+  dropdown: {
+    backgroundColor: "rgba(255,255,255,0.15)",
+    borderColor: "transparent",
+    borderRadius: 15,
+    height: Platform.OS === "ios" ? 50 : 45,
   },
- 
+  text: {
+    color: "#ffffffff",
+    fontSize: 18,
+  },
+  dropdownContainer: {
+    backgroundColor: "rgba(245, 109, 250, 1)", 
+    borderColor: "rgba(255,255,255,0.3)",
+    borderRadius: 15,
+    marginTop: 5,
+  },
+  listItem: {
+    borderBottomWidth: 0.5,
+    borderBottomColor: "#aaa",
+  },
+  selectedItem: {
+    fontWeight: "bold",
+    color: "#A75DD8",
+  },
+  placeholder: {
+    color: "rgba(255,255,255,0.7)",
+  },
 });
