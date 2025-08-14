@@ -1,9 +1,9 @@
 export const activities = ["Course","Muscu","Fitness"];
 
 export const appColors = {
-  Course: "#f00",
-  Muscu: "#0f0",
-  Fitness: "#00f",
+  Course: "#DA341B",
+  Muscu: "#6B3462",
+  Fitness: "#3CA3CC",
   TOTAL : "#000"
 };
 export const appColorsBis = {

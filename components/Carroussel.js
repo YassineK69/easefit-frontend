@@ -8,12 +8,6 @@ import Carousel, {
 } from "react-native-reanimated-carousel";
 import ModaleComponent from "./ModaleComponent";
 
-const data = [
-  { id: 0},
-  { id: 1, uri: "https://res.cloudinary.com/dtrbfskhf/image/upload/v1755007934/j3ddqwfw4heldilvm65y.jpg" },
-  { id: 2, uri:"https://res.cloudinary.com/dtrbfskhf/image/upload/v1755007934/j3ddqwfw4heldilvm65y.jpg" },
-  { id: 3, uri: "https://res.cloudinary.com/dtrbfskhf/image/upload/v1755007934/j3ddqwfw4heldilvm65y.jpg" },
-];
 const width = Dimensions.get("window").width;
 const height = 250;
 
@@ -22,16 +16,15 @@ const height = 250;
 
 //***************************************** */
 export default function Carroussel(props) {
-  console.log(props.selectedActivity);
-
-  // const data2 = props.selectedActivity.activitiesPic.map((uri,i)=>{
-  //   const newObj = {
-  //     id: i,
-  //     uri: uri,
-  //   };
-  //   return newObj;
-  // })
-  // console.log(data2)
+  
+  const data = props.selectedActivity.activitiesPic.map((uri,i)=>{
+    const newObj = {
+      id: i+1,
+      uri: uri,
+    };
+    return newObj;
+  })
+  data.unshift({ id: 0})
 
   const ref = useRef(null);
   const progress = useSharedValue(0);

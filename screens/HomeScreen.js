@@ -18,17 +18,16 @@ export default function HomeScreen({ navigation }) {
   const today = new Date().toISOString().split("T")[0];
   const token = useSelector((state) => state.user.value.token);
   const firstName = useSelector((state) => state.user.value.firstName);
-  const [markedDates, setMarkedDates] = useState({});
-  const [allActivities, setAllActivities] = useState([]);
   const [selectedActivity, setSelectedActivity] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const [markedDates, setMarkedDates] = useState({});
+  const [allActivities, setAllActivities] = useState([]);
 
   // Chargement des activités
   const dataActivities = useSelector((state) => state.activities.value);
-
   useEffect(() => {
     formatAndSetCalendar(dataActivities);
-  }, [token]);
+  }, [token, dataActivities]);
 
   const formatAndSetCalendar = (activities) => {
     const newMarkedDates = {};
@@ -47,7 +46,7 @@ export default function HomeScreen({ navigation }) {
         newMarkedDates[formattedDate] = {
           ...newMarkedDates[formattedDate],
           selected: true,
-          selectedColor: "#7b46f6",
+          selectedColor: "rgba(123, 70, 246, 0.1)",
         };
       }
       return {
@@ -55,8 +54,10 @@ export default function HomeScreen({ navigation }) {
         title: act.title || "Sans titre",
         duration: act.duration || 0,
         rating: act.grade || 0,
-        description: act.comment || "Pas de description",
+        comment: act.comment || "Pas de description",
         type: act.type || "",
+        activitiesPic:act.activitiesPic,
+        idActivity: act._id,
       };
     });
     if (!newMarkedDates[today]) {
@@ -80,7 +81,7 @@ export default function HomeScreen({ navigation }) {
       setModalVisible(false);
     }
   };
-
+                                                                          // j'ai enlevé le bouton pour aller sur graphs
   return (
     <SafeAreaView style={styles.container}>
       {/* HEADER */}
@@ -116,18 +117,23 @@ export default function HomeScreen({ navigation }) {
           current={today}
           markedDates={markedDates}
           onDayPress={handleDayPress}
+          renderArrow={(direction) => (
+            <Text style={{ fontSize: 18, color: "#6B3462", fontWeight : 'bold' }}>
+              {direction === "left" ? "<" : ">"}
+            </Text>
+          )}
           theme={{
             backgroundColor: "#fafafa",
             calendarBackground: "#fafafa",
-            textSectionTitleColor: "#7b46f6",
-            selectedDayBackgroundColor: "#7b46f6",
+            textSectionTitleColor: "#6B3462",
+            selectedDayBackgroundColor: "#6B3462",
             selectedDayTextColor: "#fff",
             todayTextColor: "#50cebb",
             dayTextColor: "#333",
             textDisabledColor: "#d9e1e8",
-            arrowColor: "#7b46f6",
-            monthTextColor: "#7b46f6",
-            indicatorColor: "#7b46f6",
+            arrowColor: "#6B3462",
+            monthTextColor: "#6B3462",
+            indicatorColor: "#6B3462",
             textDayFontSize: 14,
             textMonthFontSize: 18,
             textDayHeaderFontSize: 14,
@@ -136,15 +142,8 @@ export default function HomeScreen({ navigation }) {
           style={styles.calendar}
         />
       </View>
-      <View style={styles.divider} />
-
-      <Pressable
-        style={styles.closeButton}
-        onPress={() => navigation.navigate("Graphs")}
-      >
-        <Text style={styles.closeButtonText}>Aller sur Graphs</Text>
-      </Pressable>
-
+      <View style={styles.divider} />                               
+                                                                  
       {/* MODAL */}
       <Modal
         visible={modalVisible}
@@ -168,7 +167,7 @@ export default function HomeScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#fafafa" },
   header: {
-    marginTop: 30,
+    marginTop: 40,
     paddingHorizontal: 24,
     flexDirection: "row",
     justifyContent: "space-between",
@@ -177,27 +176,31 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     borderRadius: 15,
     marginHorizontal: 16,
-    shadowColor: "#7b46f6",
+    shadowColor: "#6B3462",
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.2,
     shadowRadius: 8,
     elevation: 5,
   },
-  greeting: { fontSize: 26, fontWeight: "800", color: "#5e2a84" },
+  greeting: { 
+    fontSize: 26, 
+    fontWeight: "800", 
+    color: "#6B3462",
+  },
   subTitle: {
     fontSize: 16,
-    color: "#5e2a84",
+    color: "#6B3462",
     fontWeight: "600",
     marginTop: 4,
   },
   addButtonContainer: {
-    backgroundColor: "#7b46f6",
+    backgroundColor: "#6B3462",
     borderRadius: 25,
     width: 48,
     height: 48,
     justifyContent: "center",
     alignItems: "center",
-    shadowColor: "#7b46f6",
+    shadowColor: "#6B3462",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.4,
     shadowRadius: 5,
@@ -206,11 +209,12 @@ const styles = StyleSheet.create({
   addButton: { fontSize: 34, color: "#fff", lineHeight: 34 },
   listViewContainer: {
     alignItems: "flex-end",
-    marginBottom: 10,
+    marginBottom: 20,
+    marginTop: 30,
     paddingRight: 24,
   },
   listViewText: {
-    color: "#7b46f6",
+    color: "#6B3462",
     fontSize: 16,
     fontWeight: "600",
     textDecorationLine: "underline",
@@ -219,10 +223,10 @@ const styles = StyleSheet.create({
     height: 3,
     alignSelf: "center",
     borderRadius: 4,
-    backgroundColor: "#7b46f6",
+    backgroundColor: "#6B3462",
     width: "75%",
     marginVertical: 15,
-    shadowColor: "#7b46f6",
+    shadowColor: "#6B3462",
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.25,
     shadowRadius: 4,
@@ -245,14 +249,14 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     borderRadius: 18,
     overflow: "hidden",
-    shadowColor: "#7b46f6",
+    shadowColor: "#6B3462",
     shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.15,
     shadowRadius: 10,
     elevation: 15,
   },
   modalHeader: {
-    backgroundColor: "#7b46f6",
+    backgroundColor: "#6B3462",
     paddingVertical: 18,
     paddingHorizontal: 15,
   },
@@ -293,9 +297,9 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
   closeButton: {
-    backgroundColor: "#7b46f6",
+    backgroundColor: "#6B3462",
     borderRadius: 15,
-    shadowColor: "#7b46f6",
+    shadowColor: "#6B3462",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 5,

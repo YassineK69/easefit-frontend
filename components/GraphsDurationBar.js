@@ -90,21 +90,19 @@ export default function GraphsDurationBar(props) {
           flexDirection: "row",
           alignItems: "center",
           marginTop: 4,
+          marginBottom : 4,
           justifyContent: "center",
-          borderWidth:0,
-          borderColor:"rgba(0,0,0,0.5)",
-          padding: 8,
           width:"48%",
         }}
         onPress={() => setSelectActivity(i)}
       >
         <FontAwesome
           name="circle"
-          size={20}
+          size={15}
           color={ appColors[type]}
           style={{ marginLeft: 0 }}
         />
-        <Text> : {type}</Text>
+        <Text> {type}</Text>
       </TouchableOpacity>
     );
   });
@@ -115,15 +113,11 @@ export default function GraphsDurationBar(props) {
       style={{
         height: 450,
         width: "100%",
-        borderWidth: 1,
-        margin: "auto",
         marginTop: 30,
-        marginBottom: 0,
         backgroundColor: "#fff",
-        borderRadius: 2,
       }}
     >
-      <View style={{ margin: 10, borderWidth: 1, borderColor: "#aaa" }}>
+      <View style={{ margin: 10 }}>
         <View
           style={{
             flexDirection: "row",
@@ -131,7 +125,7 @@ export default function GraphsDurationBar(props) {
             width: "100%",
           }}
         >
-          <Text style={{ fontSize: 20 }}>DUREE DES ACTIVITES</Text>
+          <Text style={{ fontSize: 18, paddingVertical: 10, }}>DUREE DES ACTIVITES</Text>
         </View>
         <View
           style={{
@@ -141,6 +135,7 @@ export default function GraphsDurationBar(props) {
             borderWidth: 0,
             width:'100%', 
             flexWrap:"wrap",
+            marginBottom : 10,
           }}
         >
           {legend}
@@ -195,24 +190,21 @@ export default function GraphsDurationBar(props) {
       <View
         style={{
           flexDirection: "column",
-          padding: 5,
+          padding: 10,
           borderWidth: 0,
           borderColor: "#000",
           margin: "auto",
-          fontSize: 20,
           width: "100%",
         }}
       >
-         <Text style={{ color: appColors[activitiesWidthTotal[selectActivity]] , fontSize:22, margin:'auto'}}>
+         <Text style={{ color: appColors[activitiesWidthTotal[selectActivity]] , fontSize:20, margin:'auto', paddingTop: 10}}>
           {valeurs.time && `${affichage[valeurs.time / (Math.floor(180 / nb)) -1].count} activités `}
-          {activitiesWidthTotal[selectActivity] !=="TOTAL"&& activitiesWidthTotal[selectActivity].toUpperCase()}
-          {activitiesWidthTotal[selectActivity] ==="TOTAL"&& "au TOTAL"}
+          {activitiesWidthTotal[selectActivity] !=="TOTAL"}
+          {activitiesWidthTotal[selectActivity] ==="TOTAL"}
 
         </Text>
-        <Text style={{ fontSize: 20 , margin:'auto' }}> 
-          {valeurs.time && `DUREE entre ${valeurs.time - Math.floor(180 / nb)} mn et ${valeurs.time} mn`}
-          {!valeurs.time && `PRESSEZ sur une barre `}
-
+        <Text style={{ fontSize: 16 , margin:'auto', paddingBottom : 10 }}> 
+          {valeurs.time && `Entre ${valeurs.time - Math.floor(180 / nb)} min et ${valeurs.time} min`}
         </Text>
        
       </View>
