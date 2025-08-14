@@ -1,4 +1,4 @@
-import  { useState , useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -6,68 +6,99 @@ import {
   TextInput,
   Modal,
   Platform,
-  Button,
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import { LinearGradient } from "expo-linear-gradient";
 
 const DatePickerWithModal = (props) => {
-  const [date, setDate] = useState(new Date()); 
+  const [date, setDate] = useState(new Date());
   const [showModal, setShowModal] = useState(false);
 
   const onChange = (event, selectedDate) => {
     if (selectedDate) setDate(selectedDate);
-    if (Platform.OS === "android") setShowModal(false); // Android ferme automatiquement la modale
+    if (Platform.OS === "android") setShowModal(false);
   };
 
   useEffect(() => {
     props.select(date);
   }, [date]);
 
-  const confirmIOSDate = () => setShowModal(false); // pour valider manuellement sur iOS
-  const backgroundColor= props.backgroundColor; 
-  
+  const confirmIOSDate = () => setShowModal(false);
+  const backgroundColor = props.backgroundColor || "rgba(255,255,255,0.15)";
+
   return (
-    <View>
-      <TouchableOpacity onPress={() => setShowModal(true)}>
+    <View style={{ width: "100%" }}>
+      <TouchableOpacity onPress={() => setShowModal(true)} activeOpacity={0.8}>
         <TextInput
           value={date.toLocaleDateString()}
           editable={false}
           pointerEvents="none"
           style={{
-            borderWidth: 1,
-            padding: 10,
-            borderRadius: 5,
-            borderColor: "#ccc",
-            backgroundColor:backgroundColor,
+            padding: 14,
+            borderRadius: 15,
+            backgroundColor,
+            color: "#fff",
+            fontSize: 16,
+            letterSpacing: 0.5,
           }}
         />
       </TouchableOpacity>
 
-      <Modal visible={showModal} transparent animationType="slide">
+      <Modal visible={showModal} transparent animationType="fade">
         <View
           style={{
             flex: 1,
             justifyContent: "flex-end",
-            backgroundColor: "#00000077",
+            backgroundColor: "rgba(0,0,0,0.6)",
           }}
         >
           <View
             style={{
-              backgroundColor: "white",
-              padding: 16,
-              borderTopLeftRadius: 20,
-              borderTopRightRadius: 20,
+              backgroundColor: "#1e1e2e",
+              padding: 20,
+              borderTopLeftRadius: 25,
+              borderTopRightRadius: 25,
+              alignItems: "center",
             }}
           >
+            <Text style={{ color: "#fff", fontSize: 18, marginBottom: 10 }}>
+              Sélectionner une date
+            </Text>
+
             <DateTimePicker
               value={date}
               mode="date"
               display="spinner"
+              textColor="#fff"
               onChange={onChange}
-              style={{ backgroundColor: "white" }}
+              style={{ backgroundColor: "transparent" }}
             />
+
             {Platform.OS === "ios" && (
-              <Button title="Valider" onPress={confirmIOSDate} />
+              <TouchableOpacity
+                onPress={confirmIOSDate}
+                activeOpacity={0.8}
+                style={{ marginTop: 20, width: "100%" }}
+              >
+                <LinearGradient
+                  colors={["#A75DD8", "#6B3462"]}
+                  start={[0, 0]}
+                  end={[1, 1]}
+                  style={{
+                    paddingVertical: 14,
+                    borderRadius: 30,
+                    alignItems: "center",
+                    shadowColor: "#7A42C0",
+                    shadowOpacity: 0.3,
+                    shadowRadius: 8,
+                    shadowOffset: { width: 0, height: 4 },
+                  }}
+                >
+                  <Text style={{ color: "#fff", fontSize: 16, fontWeight: "600" }}>
+                    Valider
+                  </Text>
+                </LinearGradient>
+              </TouchableOpacity>
             )}
           </View>
         </View>

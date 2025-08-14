@@ -1,24 +1,24 @@
 import { StyleSheet, Text, TouchableOpacity, View, Image, TextInput, ImageBackground, KeyboardAvoidingView, Platform } from 'react-native';
-import { loadActivities } from '../reducers/activities';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { loadActivities } from '../reducers/activities';
 import { login } from '../reducers/user';
+import { LinearGradient } from 'expo-linear-gradient';
+import { BlurView } from 'expo-blur';
 
 const EMAIL_REGEX = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
-export default function SignInScreen({ navigation }) { 
+export default function SignInScreen({ navigation }) {
   const [signInEmail, setSignInEmail] = useState('test@gmail.com');
   const [signInPassword, setSignInPassword] = useState('test');
   const [errorMessage, setErrorMessage] = useState('');
   const dispatch = useDispatch();
 
-
-
   const goToHome = () => {
     if (!EMAIL_REGEX.test(signInEmail)) {
       setErrorMessage('Format email incorrect');
       return;
-    } 
+    }
 
     fetch(`${process.env.EXPO_PUBLIC_URL_VERCEL}/users/signin`, {
       method: 'POST',
@@ -28,15 +28,12 @@ export default function SignInScreen({ navigation }) {
       .then(response => response.json())
       .then(data => {
         if (data.result) {
-          // Stocke le firstName en plus
-          dispatch(login({ 
-            email: signInEmail, 
+          dispatch(login({
+            email: signInEmail,
             token: data.token,
-            firstName: data.firstName || '', 
+            firstName: data.firstName || '',
           }));
-
           dispatch(loadActivities(data.activities));
-
           setSignInEmail('');
           setSignInPassword('');
           navigation.navigate('TabNavigator', { screen: 'Home' });
@@ -51,132 +48,178 @@ export default function SignInScreen({ navigation }) {
   };
 
   return (
-    <ImageBackground source={require('../assets/images/formes-abstraites-generees-par-l-ia.jpg')} style={styles.background}>
-      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.container}>
-        <Image style={styles.image} source={require('../assets/whitelogo.png')} />
-        <Text style={styles.h1}>EASEFIT</Text>
-        <View style={styles.input}>
-          <TextInput 
-            placeholder='Email' 
-            placeholderTextColor="rgba(255,255,255,0.5)" 
-            style={styles.inputbox} 
-            onChangeText={setSignInEmail} 
-            value={signInEmail} 
-            autoCapitalize="none" 
-            keyboardType="email-address" 
-            textContentType="emailAddress" 
-            autoComplete="email" 
-          />
-          <TextInput 
-            placeholder='Mot de passe' 
-            placeholderTextColor="rgba(255,255,255,0.5)" 
-            style={styles.inputbox} 
-            onChangeText={setSignInPassword} 
-            value={signInPassword} 
-            secureTextEntry // securisation du mdp (masquage du mdp)
-            autoCapitalize="none" 
-          />
+    <ImageBackground
+      source={require('../assets/images/abstrait-fond-sombre-avec-des-vagues-colorees-qui-coule.jpg')}
+      style={styles.background}
+    >
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={styles.container}
+      >
+        {/* Bloc Logo + Titre */}
+        <View style={styles.logoBlock}>
+          <BlurView intensity={60} tint="dark" style={styles.logoWrapper}>
+            <LinearGradient
+              colors={['rgba(167,93,216,0.6)', 'rgba(107,52,98,0.6)']}
+              start={[0, 0]}
+              end={[1, 1]}
+              style={styles.logoGradient}
+            >
+              <Image style={styles.image} source={require('../assets/logo3_cropped.png')} />
+            </LinearGradient>
+          </BlurView>
+          <Text style={styles.h1}>EASEFIT</Text>
         </View>
-        {errorMessage !== '' && <Text style={{ color: 'red', textAlign: 'center', marginVertical: 10 }}>{errorMessage}</Text>}
-        <TouchableOpacity onPress={goToHome} style={styles.buttonToHome} activeOpacity={0.8}>
-          <Text style={styles.textToHome}>Se connecter</Text>
-        </TouchableOpacity>
-        <View style={styles.goSignUp}>
-          <Text style={styles.textSignUp}>Vous n'avez pas de compte ?</Text>
-          <Text onPress={() => navigation.navigate('SignUp')} style={styles.textSignUpLink}> Inscrivez-vous</Text>
-        </View>
-        <View style={{height: 1, backgroundColor: 'gray', width: '100%', marginVertical: 10 }} />
-        <View>
-          <Text style={styles.sso}>SSO A VOIR APRES</Text>
+
+        {/* Bloc Formulaire */}
+        <View style={styles.formBlock}>
+          <View style={styles.inputContainer}>
+            <TextInput
+              placeholder='Email'
+              placeholderTextColor="rgba(255,255,255,0.6)"
+              style={styles.inputbox}
+              onChangeText={setSignInEmail}
+              value={signInEmail}
+              autoCapitalize="none"
+              keyboardType="email-address"
+              textContentType="emailAddress"
+              autoComplete="email"
+            />
+            <TextInput
+              placeholder='Mot de passe'
+              placeholderTextColor="rgba(255,255,255,0.6)"
+              style={styles.inputbox}
+              onChangeText={setSignInPassword}
+              value={signInPassword}
+              secureTextEntry
+              autoCapitalize="none"
+            />
+          </View>
+
+          {errorMessage !== '' && (
+            <Text style={styles.error}>{errorMessage}</Text>
+          )}
+
+          {/* Bouton Se connecter avec largeur réduite */}
+          <TouchableOpacity onPress={goToHome} activeOpacity={0.85} style={{ alignSelf: 'center' }}>
+            <LinearGradient
+              colors={['#A75DD8', '#6B3462']}
+              start={[0, 0]}
+              end={[1, 1]}
+              style={styles.primaryButton}
+            >
+              <Text style={styles.primaryButtonText}>Se connecter</Text>
+            </LinearGradient>
+          </TouchableOpacity>
+
+          <View style={styles.goSignUp}>
+            <Text style={styles.textSignUp}>Pas de compte ?</Text>
+            <Text onPress={() => navigation.navigate('SignUp')} style={styles.textSignUpLink}> Inscrivez-vous</Text>
+          </View>
         </View>
       </KeyboardAvoidingView>
     </ImageBackground>
   );
 }
 
-const styles = StyleSheet.create({        
-  background:{
+const styles = StyleSheet.create({
+  background: {
     width: '100%',
     height: '100%',
-    resizeMode: 'cover'
+    resizeMode: 'cover',
   },
-  container: {                            
+  container: {
     flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center', 
+    paddingHorizontal: 20,
+    marginBottom: 70,
+  },
+  logoBlock: {
+    alignItems: 'center',
+    marginBottom: 50,
+  },
+  logoWrapper: {
+    borderRadius: 35,
+    overflow: 'hidden',
+    shadowColor: '#7A42C0',
+    shadowOpacity: 0.35,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 8 },
+    elevation: 5,
+  },
+  logoGradient: {
+    borderRadius: 35,
+    padding: 15,
     alignItems: 'center',
     justifyContent: 'center',
   },
   image: {
-    marginTop : 45,
     width: 150,
-    height: 150,
-  }, 
-  h1 :{
-    fontSize : 50,
-    fontWeight : '600',
-    fontFamily: 'Manrope_700Bold',
-    color : '#ffffff',
-    textAlign : 'center',
-    margin : 30,
-    letterSpacing : 5,
+    height: 130,
+    resizeMode: 'contain',
   },
-  input: {
-    width: '90%',        
-    alignItems: 'center', 
+  h1: {
+    fontSize: 48,
+    fontWeight: '700',
+    color: '#fff',
+    letterSpacing: 4,
+    fontFamily: 'Manrope_700Bold',
+    marginTop: 5, 
+  },
+  formBlock: {
+    width: '100%',
+    alignItems: 'center',
+    gap: 15,
+  },
+  inputContainer: {
+    width: '100%',
+    gap: 15,
   },
   inputbox: {
-    width: '90%',
-    height: 50,   
-    borderWidth: 0.5,
-    borderColor: 'white',
-    borderRadius: 8,
-    paddingHorizontal: 10, 
+    width: '100%',
+    height: 55,
+    backgroundColor: 'rgba(255,255,255,0.15)',
+    borderRadius: 15,
+    paddingHorizontal: 15,
     color: 'white',
-    fontSize: 20,
-    fontFamily: 'Manrope_600Regular',
-    fontWeight : '600',
-    marginBottom: 25,
-    opacity: 0.9,
-    textAlignVertical: 'center', 
+    fontSize: 18,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.2)',
   },
-  buttonToHome: {
-    backgroundColor: '#6B3462',
-    borderRadius: 25,
+  error: {
+    color: 'red',
+    textAlign: 'center',
+  },
+  primaryButton: {
+    borderRadius: 35,
     paddingVertical: 12,
-    paddingHorizontal: 70,
+    paddingHorizontal: 80,
     alignItems: 'center',
-    marginVertical: 0,
-    marginBottom : 20,
-    marginTop : 10,
+    marginVertical: 15,
+    shadowColor: '#7A42C0',
+    shadowOpacity: 0.35,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 8 },
+    elevation: 5,
   },
-  textToHome: {
-    color: 'white',
+  primaryButtonText: {
+    color: '#fff',
     fontSize: 20,
-    fontFamily: 'Manrope_700Bold',
-    fontWeight : '600',
+    fontWeight: '700',
+    letterSpacing: 1,
   },
   goSignUp: {
     flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 10,
-    fontFamily: 'Manrope_400Regular',
-    marginBottom : 10,
   },
-  ////
-  textSignUp:{
-    color: 'white', 
-    fontSize : 12,
+  textSignUp: {
+    color: 'white',
+    fontSize: 14,
   },
-  textSignUpLink:{
-    color:'white', 
+  textSignUpLink: {
+    color: 'white',
     textDecorationLine: 'underline',
-    fontSize : 12,
-  },
-  sso: {
-    marginTop: 20,
-    alignItems: 'center',
-    backgroundColor : 'white',
-    padding : 50,
-    borderRadius : 10,
+    fontSize: 14,
+    marginLeft: 5,
   },
 });
