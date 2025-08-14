@@ -80,7 +80,7 @@ export default function ModaleComponent(props) {
           //dispatch(addNewActivity(data.newActivity));
           console.log("photo sauvegardée");
         } else {
-          setErrorMessage(data.error);
+          //setErrorMessage(data.error);
           console.log("erreur retournée", data.error);
         }
       });
