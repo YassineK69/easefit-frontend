@@ -52,6 +52,7 @@ export default function ModaleComponent(props) {
     setViewUploadPic(!viewUploadPic);
     setActivityImageUri(null);
     setActivityImageName(null);
+    setErrorMessage("");
   };
 
   const handleRegister = () => {
@@ -64,6 +65,8 @@ export default function ModaleComponent(props) {
         type: "image/jpeg",
       });
     }
+    console.log("id ", selectedActivity.idActivity, "IMAGE ", activityImageUri);
+    console.log("formData", formData);
     fetch(
       `${process.env.EXPO_PUBLIC_URL_VERCEL}/activities/addPicture/${token}`,
       {
@@ -78,7 +81,7 @@ export default function ModaleComponent(props) {
           console.log("photo sauvegardée");
         } else {
           setErrorMessage(data.error);
-          console.log("erreur", data.error);
+          console.log("erreur retournée", data.error);
         }
       });
   };
@@ -123,55 +126,80 @@ export default function ModaleComponent(props) {
           </View>
         </View>
       </ImageBackground>
-
       {/* Contenu de la fenêtre pour la saisie des images */}
       {viewUploadPic && (
-        <View
-          style={{
-            borderColor: "#f00",
-            flexDirection: "row",
-            borderWidth: 1,
-            justifyContent: "space-between",
-            alignItems: "center",
-            width: "100%",
-            padding: 5,
-            height: 100,
-          }}
-        >
-          <TouchableOpacity style={{ margin: 10 }} onPress={handleGallery}>
-            <FontAwesome name="upload" size={22} color="#000" />
-          </TouchableOpacity>
-          {activityImageName && (
-            <Text style={{ color: "#000", marginTop: 5 }}>
-              {activityImageName}
-            </Text>
-          )}
-          <TouchableOpacity
-            style={{ backgroundColor: "#000", borderRadius: 10, margin: 5 }}
-            onPress={handleRegister}
+        <View style={{ borderRadius: 20, borderWidth: 0 }}>
+          <View
+            style={{
+              borderColor: "#f00",
+              flexDirection: "row",
+              borderWidth: 0,
+              justifyContent: "space-between",
+              alignItems: "center",
+              width: "100%",
+              padding: 2,
+              height: 70,
+            }}
           >
+            <TouchableOpacity style={{ margin: 10 }} onPress={handleGallery}>
+              <FontAwesome name="upload" size={22} color="#000" />
+            </TouchableOpacity>
+            {activityImageName && (
+              <Text style={{ color: "#000", marginTop: 5 }}>
+                {activityImageName}
+              </Text>
+            )}
+            <TouchableOpacity
+              style={{ backgroundColor: "#000", borderRadius: 10, margin: 5 }}
+              onPress={handleRegister}
+            >
+              <Text
+                style={{
+                  fontSize: 16,
+                  fontWeight: "700",
+                  margin: 5,
+                  color: "#fff",
+                }}
+              >
+                Enregistrer
+              </Text>
+            </TouchableOpacity>
+          </View>
+          {/* Message d'erreur éventuel */}
+          {!errorMessage !== "" && (
             <Text
               style={{
-                fontSize: 16,
-                fontWeight: "700",
-                margin: 10,
-                color: "#fff",
+                color: "red",
+                textAlign: "center",
+                marginVertical: 0,
+                height: 5,
+                borderRadius: 20,
+              }}
+            ></Text>
+          )}
+          {errorMessage !== "" && (
+            <Text
+              style={{
+                color: "red",
+                textAlign: "center",
+                marginVertical: 0,
               }}
             >
-              Enregistrer
+              {errorMessage}
             </Text>
-          </TouchableOpacity>
+          )}
         </View>
       )}
-      {/* Contenu texte (zone de description) */}
-
-      <View style={styles.modalContent}>
-        <ScrollView>
-          <Text style={styles.modalDescription}>
-            {selectedActivity?.comment}
-          </Text>
-        </ScrollView>
-      </View>
+      {/* Contenu texte (zone de description) */}!
+      {!viewUploadPic && (
+        <View style={styles.modalContent}>
+          <ScrollView>
+            <Text style={styles.modalDescription}>
+              {selectedActivity?.comment}
+            </Text>
+          </ScrollView>
+        </View>
+      )}
     </View>
   );
 }
