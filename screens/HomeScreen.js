@@ -127,7 +127,7 @@ export default function HomeScreen({ navigation }) {
             calendarBackground: "#fafafa",
             textSectionTitleColor: "#6B3462",
             selectedDayBackgroundColor: "#6B3462",
-            selectedDayTextColor: "#fff",
+            selectedDayTextColor: "black",
             todayTextColor: "#50cebb",
             dayTextColor: "#333",
             textDisabledColor: "#d9e1e8",
