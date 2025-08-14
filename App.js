@@ -78,12 +78,21 @@ const TabNavigator = () => {
         }}
       />
       <Tab.Screen
-        name="Profile"
-        component={ProfileScreen}
-        options={
-          {} // voir si integration d'un background tabbar ou laisser blanc 
-        }
-      />
+  name="Profile"
+  component={ProfileScreen}
+  options={{
+   
+    tabBarStyle: {
+      backgroundColor: 'rgba(0,0,0,0.5)', // transparence
+      borderTopWidth: 0,
+      elevation: 0,
+      height: 90,
+      position: 'absolute', 
+    },
+    tabBarActiveTintColor: '#ec6e5b', // texte actif blanc
+    tabBarInactiveTintColor: '#ccc', // texte inactif gris clair
+  }}
+/>
     </Tab.Navigator>
   );
 };
