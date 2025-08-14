@@ -51,7 +51,7 @@ export default function SignInScreen({ navigation }) {
   };
 
   return (
-    <ImageBackground source={require('../assets/fond2.png')} style={styles.background}>
+    <ImageBackground source={require('../assets/images/formes-abstraites-generees-par-l-ia.jpg')} style={styles.background}>
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.container}>
         <Image style={styles.image} source={require('../assets/whitelogo.png')} />
         <Text style={styles.h1}>EASEFIT</Text>
