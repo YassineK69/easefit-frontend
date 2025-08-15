@@ -6,6 +6,7 @@ import {
   TextInput,
   Platform,
   KeyboardAvoidingView,
+  ScrollView,
   ImageBackground,
 } from "react-native";
 import { useState } from "react";
@@ -16,10 +17,12 @@ import { login } from "../reducers/user";
 import { LinearGradient } from "expo-linear-gradient";
 import { BlurView } from "expo-blur";
 
+// Regex pour vérifier le format de l'email
 const EMAIL_REGEX =
   /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
 export default function SignUpScreen({ navigation }) {
+  // Etats pour stocker les valeurs du formulaire
   const [errorMessage, setErrorMessage] = useState("");
   const dispatch = useDispatch();
   const [email, setEmail] = useState("");
@@ -30,25 +33,22 @@ export default function SignUpScreen({ navigation }) {
   const [firstName, setFirstName] = useState("");
   const [height, setHeight] = useState("");
 
+  // Fonctions pour récupérer les valeurs du Dropdown et DatePicker
   const selectGender = (value) => setGender(value);
   const selectBirthday = (value) => setBirthday(value);
 
+  // Fonction appelée lors du submit
   const handleSubmit = () => {
+    // Vérification du format email
     if (!EMAIL_REGEX.test(email)) {
       setErrorMessage("Format email incorrect");
       return;
     }
 
-    const dataUser = {
-      email,
-      password,
-      lastName,
-      firstName,
-      gender,
-      birthday,
-      height,
-    };
+    // Préparation des données à envoyer
+    const dataUser = { email, password, lastName, firstName, gender, birthday, height };
 
+    // Envoi de la requête au serveur
     fetch(`${process.env.EXPO_PUBLIC_URL_VERCEL}/users/signup`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -57,169 +57,160 @@ export default function SignUpScreen({ navigation }) {
       .then((response) => response.json())
       .then((data) => {
         if (data.result) {
+          // Si inscription réussie, on sauvegarde l'utilisateur et on navigue
           dispatch(login({ email, token: data.token }));
           setEmail("");
           setPassword("");
           navigation.navigate("TabNavigator", { screen: "Home" });
         } else {
+          // Sinon affichage de l'erreur
           setErrorMessage(data.error);
         }
       });
   };
 
   return (
+    // Image de fond
     <ImageBackground
       source={require("../assets/images/conception-abstraite-de-lignes-fluides-violettes.jpg")}
       style={styles.background}
     >
+      {/* KeyboardAvoidingView pour gérer le clavier */}
       <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={styles.container}
+        style={{ flex: 1 }}
+        behavior={Platform.OS === "ios" ? "padding" : undefined} 
       >
-        <Text style={styles.title}>Inscription</Text>
+        {/* ScrollView pour permettre le scroll quand le clavier est ouvert */}
+        <ScrollView
+          contentContainerStyle={styles.scrollContainer}
+          keyboardShouldPersistTaps="handled" // Permet de fermer le clavier quand on tape ailleurs
+        >
+          {/* Titre */}
+          <Text style={styles.title}>Inscription</Text>
 
-        {/* BlurView avec bords arrondis */}
-        <BlurView intensity={80} tint="light" style={styles.blurContainer}>
-          <View style={styles.formBlock}>
-            <View style={styles.boxInput}>
-              <TextInput
-                placeholder="Prénom"
-                placeholderTextColor="rgba(255,255,255,0.7)"
-                autoCapitalize="none"
-                onChangeText={setFirstName}
-                value={firstName}
-                style={styles.input}
-              />
+          {/* Conteneur flouté pour le formulaire */}
+          <BlurView intensity={80} tint="light" style={styles.blurContainer}>
+            <View style={styles.formBlock}>
+              {/* Champ Prénom */}
+              <View style={styles.boxInput}>
+                <TextInput
+                  placeholder="Prénom"
+                  placeholderTextColor="rgba(255,255,255,0.7)"
+                  autoCapitalize="none"
+                  onChangeText={setFirstName}
+                  value={firstName}
+                  style={styles.input}
+                />
+              </View>
+
+              {/* Champ Nom */}
+              <View style={styles.boxInput}>
+                <TextInput
+                  placeholder="Nom"
+                  placeholderTextColor="rgba(255,255,255,0.7)"
+                  autoCapitalize="none"
+                  onChangeText={setLastName}
+                  value={lastName}
+                  style={styles.input}
+                />
+              </View>
+
+              {/* Dropdown Genre */}
+              <View style={styles.boxInput}>
+                <Dropdown selectGender={selectGender} />
+              </View>
+
+              {/* Sélecteur Date de naissance */}
+              <View style={styles.boxInput}>
+                <Text style={{ padding: 10, color: "#fff" }}>Date de naissance</Text>
+                <DatePickerWithModal
+                  select={selectBirthday}
+                  backgroundColor="rgba(255,255,255,0.1)"
+                />
+              </View>
+
+              {/* Champ Taille */}
+              <View style={styles.boxInput}>
+                <TextInput
+                  placeholder="Taille en cm"
+                  placeholderTextColor="rgba(255,255,255,0.7)"
+                  autoCapitalize="none"
+                  onChangeText={setHeight}
+                  value={height}
+                  style={styles.input}
+                  keyboardType="numeric"
+                />
+              </View>
+
+              {/* Champ Email */}
+              <View style={styles.boxInput}>
+                <TextInput
+                  placeholder="Email"
+                  placeholderTextColor="rgba(255,255,255,0.7)"
+                  autoCapitalize="none"
+                  keyboardType="email-address"
+                  textContentType="emailAddress"
+                  autoComplete="email"
+                  onChangeText={setEmail}
+                  value={email}
+                  style={styles.input}
+                />
+              </View>
+
+              {/* Champ Password */}
+              <View style={styles.boxInput}>
+                <TextInput
+                  placeholder="Password"
+                  placeholderTextColor="rgba(255,255,255,0.7)"
+                  autoCapitalize="none"
+                  onChangeText={setPassword}
+                  value={password}
+                  style={styles.input}
+                  secureTextEntry={true}
+                />
+              </View>
+
+              {/* Affichage de l'erreur si présente */}
+              {errorMessage !== "" && <Text style={styles.error}>{errorMessage}</Text>}
+
+              {/* Bouton S'inscrire */}
+              <TouchableOpacity onPress={handleSubmit} activeOpacity={0.8} style={{ width: "100%" }}>
+                <LinearGradient
+                  colors={["#A75DD8", "#6B3462"]}
+                  start={[0, 0]}
+                  end={[1, 1]}
+                  style={styles.primaryButton}
+                >
+                  <Text style={styles.primaryButtonText}>S'inscrire</Text>
+                </LinearGradient>
+              </TouchableOpacity>
+
+              {/* Lien vers la page Connexion */}
+              <TouchableOpacity onPress={() => navigation.navigate("SignIn")} activeOpacity={0.7}>
+                <Text style={styles.secondaryText}>Déjà un compte ? Connexion</Text>
+              </TouchableOpacity>
             </View>
-
-            <View style={styles.boxInput}>
-              <TextInput
-                placeholder="Nom"
-                placeholderTextColor="rgba(255,255,255,0.7)"
-                autoCapitalize="none"
-                onChangeText={setLastName}
-                value={lastName}
-                style={styles.input}
-              />
-            </View>
-
-            <View style={styles.boxInput}>
-              <Dropdown selectGender={selectGender} />
-            </View>
-
-            <View style={styles.boxInput}>
-              <Text style={{ padding: 10, color: "#fff" }}>Date de naissance</Text>
-              <DatePickerWithModal
-                select={selectBirthday}
-                backgroundColor="rgba(255,255,255,0.1)"
-              />
-            </View>
-
-            <View style={styles.boxInput}>
-              <TextInput
-                placeholder="Taille en cm"
-                placeholderTextColor="rgba(255,255,255,0.7)"
-                autoCapitalize="none"
-                onChangeText={setHeight}
-                value={height}
-                style={styles.input}
-                keyboardType="numeric"
-              />
-            </View>
-
-            <View style={styles.boxInput}>
-              <TextInput
-                placeholder="Email"
-                placeholderTextColor="rgba(255,255,255,0.7)"
-                autoCapitalize="none"
-                keyboardType="email-address"
-                textContentType="emailAddress"
-                autoComplete="email"
-                onChangeText={setEmail}
-                value={email}
-                style={styles.input}
-              />
-            </View>
-
-            <View style={styles.boxInput}>
-              <TextInput
-                placeholder="Password"
-                placeholderTextColor="rgba(255,255,255,0.7)"
-                autoCapitalize="none"
-                onChangeText={setPassword}
-                value={password}
-                style={styles.input}
-                secureTextEntry={true}
-              />
-            </View>
-
-            {errorMessage !== "" && (
-              <Text style={styles.error}>{errorMessage}</Text>
-            )}
-
-            <TouchableOpacity
-              onPress={handleSubmit}
-              activeOpacity={0.8}
-              style={{ width: "100%" }}
-            >
-              <LinearGradient
-                colors={["#A75DD8", "#6B3462"]}
-                start={[0, 0]}
-                end={[1, 1]}
-                style={styles.primaryButton}
-              >
-                <Text style={styles.primaryButtonText}>S'inscrire</Text>
-              </LinearGradient>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={() => navigation.navigate("SignIn")}
-              activeOpacity={0.7}
-            >
-              <Text style={styles.secondaryText}>
-                Déjà un compte ? Connexion
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </BlurView>
+          </BlurView>
+        </ScrollView>
       </KeyboardAvoidingView>
     </ImageBackground>
   );
 }
 
+// Styles
 const styles = StyleSheet.create({
-  background: {
-    flex: 1,
-    width: "100%",
-    height: "100%",
-    resizeMode: "cover",
-  },
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    paddingHorizontal: 20,
-  },
-  title: {
-    fontSize: 36,
-    fontWeight: "700",
-    color: "#fff",
-    marginBottom: 5,
-    marginTop: 15,
-    textAlign: "center",
-  },
+  background: { flex: 1, width: "100%", height: "100%", resizeMode: "cover" },
+  scrollContainer: { flexGrow: 1, justifyContent: "center", paddingHorizontal: 20 },
+  title: { fontSize: 36, fontWeight: "700", color: "#fff", marginBottom: 5, marginTop: 15, textAlign: "center" },
   blurContainer: {
     width: "100%",
-    borderRadius: 25, 
-    overflow: "hidden", 
-    backgroundColor: "rgba(255,255,255,0.1)", 
+    borderRadius: 25,
+    overflow: "hidden",
+    backgroundColor: "rgba(255,255,255,0.1)",
     padding: 20,
     marginVertical: 10,
   },
-  formBlock: {
-    width: "100%",
-    alignItems: "center",
-    gap: 12,
-  },
+  formBlock: { width: "100%", alignItems: "center", gap: 12 },
   boxInput: {
     width: "100%",
     backgroundColor: "rgba(255,255,255,0.15)",
@@ -227,10 +218,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     paddingVertical: Platform.OS === "ios" ? 12 : 8,
   },
-  input: {
-    fontSize: 18,
-    color: "#fff",
-  },
+  input: { fontSize: 18, color: "#fff" },
   primaryButton: {
     borderRadius: 35,
     paddingVertical: 12,
@@ -243,22 +231,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 8 },
     elevation: 5,
   },
-  primaryButtonText: {
-    color: "#fff",
-    fontSize: 20,
-    fontWeight: "700",
-    letterSpacing: 1,
-  },
-  secondaryText: {
-    color: "rgba(255,255,255,0.7)",
-    fontSize: 16,
-    textAlign: "center",
-    marginTop: 10,
-    textDecorationLine: "underline",
-  },
-  error: {
-    color: "red",
-    textAlign: "center",
-    marginVertical: 5,
-  },
+  primaryButtonText: { color: "#fff", fontSize: 20, fontWeight: "700", letterSpacing: 1 },
+  secondaryText: { color: "rgba(255,255,255,0.7)", fontSize: 16, textAlign: "center", marginTop: 10, textDecorationLine: "underline" },
+  error: { color: "red", textAlign: "center", marginVertical: 5 },
 });
