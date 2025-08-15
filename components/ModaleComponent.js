@@ -11,6 +11,7 @@ import {
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import * as ImagePicker from "expo-image-picker";
 import { useSelector, useDispatch } from "react-redux";
+import { addPicture } from "../reducers/activities";
 
 const { width } = Dimensions.get("window");
 
@@ -55,9 +56,11 @@ export default function ModaleComponent(props) {
   };
 
   const handleRegister = () => {
+            console.log("register");
     const formData = new FormData();
     formData.append("idActivity", selectedActivity._id);
     if (activityImageUri) {
+      console.log("if")
       formData.append("activitiesPic", {
         uri: activityImageUri,
         name: activityImageUri.split("/").pop(),
@@ -71,12 +74,28 @@ export default function ModaleComponent(props) {
         body: formData,
       }
     )
-      .then((response) => response.json())
+      .then((response) => {
+        console.log("RESPONSE",JSON.stringify(response));
+        
+        
+        return response.json()})
       .then((data) => {
-        if (!data.result) {
-          setErrorMessage(data.error);
+        console.log(data);
+        
+        if (data.result) {
+          //dispatch(addNewActivity(data.newActivity));
+          console.log("photo sauvegardée");
+          const i = dataActivities.findIndex(obj=>obj._id === selectedActivity._id);
+          dispatch(  addPicture({idActivity: selectedActivity._id , activityPic: data.activitiesPic })   );
+         
+          setViewUploadPic(!viewUploadPic);
+        } else {
+          //setErrorMessage(data.error);
+          console.log("erreur retournée", data.error);
+          setErrorMessage("Erreur de chargement");
         }
-      });
+      }).catch(error => console.log(error)
+      );
   };
 
   return (
