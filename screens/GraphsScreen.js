@@ -69,13 +69,13 @@ export default function GraphsScreen({ navigation }) {
             <View style={styles.filtersContainer}>
               <View style={styles.filterGroup}>
                 <Text style={styles.filterLabel}>Entre le :</Text>
-                <View>
+                <View style={styles.datepicker}>
                   <DatePickerWithModal select={selectStart} />
                 </View>
               </View>
               <View style={styles.filterGroup}>
                 <Text style={styles.filterLabel}> et :</Text>
-                <View>
+                <View style={styles.datepicker}>
                   <DatePickerWithModal select={selectEnd} />
                 </View>
               </View>
@@ -122,6 +122,10 @@ const styles = StyleSheet.create({
     height: 30,
     fontWeight: "600",
     fontSize: 16,
+  },
+  datepicker:{
+    backgroundColor:"rgba(107, 52, 98, 0.5)",
+    borderRadius : 30,
   },
   image: {
   width: 80,

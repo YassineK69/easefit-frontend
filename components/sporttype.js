@@ -17,7 +17,7 @@ const Dropdown = (props) => {
 
   return (
     <View style={styles.wrapper}>
-        <DropDownPicker open={open} value={value} items={items} setOpen={setOpen} setValue={setValue} setItems={setItems} placeholder="Course"
+        <DropDownPicker open={open} value={value} items={items} setOpen={setOpen} setValue={setValue} setItems={setItems} placeholder="Type de sport"
         style={styles.dropdown} textStyle={styles.text} dropDownContainerStyle={styles.dropdownContainer} placeholderStyle={styles.placeholder}/>
     </View>
   );
