@@ -7,6 +7,8 @@ import Carousel, {
   Pagination,
 } from "react-native-reanimated-carousel";
 import ModaleComponent from "./ModaleComponent";
+import { useSelector } from "react-redux";
+
 
 const width = Dimensions.get("window").width;
 const height = 250;
@@ -16,14 +18,21 @@ const height = 250;
 
 //***************************************** */
 export default function Carroussel(props) {
-  
-  const data = props.selectedActivity.activitiesPic.map((uri,i)=>{
+const dataActivities = useSelector((state) => state.activities.value);
+console.log("CARROUSSEL")
+console.log('props.selectedActivity : ',props.selectedActivity)
+console.log('dataActivities',dataActivities)
+
+const selectedActivity = dataActivities.find(e => props.selectedActivity._id == e._id)
+ 
+  const data = selectedActivity.activitiesPic.map((uri,i)=>{
     const newObj = {
       id: i+1,
       uri: uri,
     };
     return newObj;
   })
+
   data.unshift({ id: 0})
 
   const ref = useRef(null);

@@ -9,8 +9,8 @@ import { BlurView } from 'expo-blur';
 const EMAIL_REGEX = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
 export default function SignInScreen({ navigation }) {
-  const [signInEmail, setSignInEmail] = useState('test@gmail.com');
-  const [signInPassword, setSignInPassword] = useState('test');
+  const [signInEmail, setSignInEmail] = useState('');
+  const [signInPassword, setSignInPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const dispatch = useDispatch();
 

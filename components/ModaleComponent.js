@@ -13,6 +13,8 @@ import {
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import * as ImagePicker from "expo-image-picker";
 import { useDispatch, useSelector } from "react-redux";
+import { addPicture } from "../reducers/activities";
+
 
 export default function ModaleComponent(props) {
   const selectedActivity = props.selectedActivity;
@@ -21,6 +23,8 @@ export default function ModaleComponent(props) {
   const [activityImageName, setActivityImageName] = useState(null);
   const [errorMessage, setErrorMessage] = useState("");
   const token = useSelector((state) => state.user.value.token);
+  const dataActivities = useSelector((state) => state.activities.value);
+  const dispatch = useDispatch();
 
   const handleGallery = async () => {
     const permissionResult =
@@ -57,7 +61,7 @@ export default function ModaleComponent(props) {
 
   const handleRegister = () => {
     const formData = new FormData();
-    formData.append("idActivity", selectedActivity.idActivity);
+    formData.append("idActivity", selectedActivity._id);
     if (activityImageUri) {
       formData.append("activitiesPic", {
         uri: activityImageUri,
@@ -65,8 +69,7 @@ export default function ModaleComponent(props) {
         type: "image/jpeg",
       });
     }
-    console.log("id ", selectedActivity.idActivity, "IMAGE ", activityImageUri);
-    console.log("formData", formData);
+
     fetch(
       `${process.env.EXPO_PUBLIC_URL_VERCEL}/activities/addPicture/${token}`,
       {
@@ -77,11 +80,12 @@ export default function ModaleComponent(props) {
       .then((response) => response.json())
       .then((data) => {
         if (data.result) {
-          //dispatch(addNewActivity(data.newActivity));
-          console.log("photo sauvegardée");
+          const i = dataActivities.findIndex(obj=>obj._id === selectedActivity._id);
+          dispatch(  addPicture({idActivity: selectedActivity._id , activityPic: data.activitiesPic })   );
+         
+          setViewUploadPic(!viewUploadPic);
         } else {
-          //setErrorMessage(data.error);
-          console.log("erreur retournée", data.error);
+          setErrorMessage("Erreur de chargement");
         }
       });
   };
@@ -141,7 +145,7 @@ export default function ModaleComponent(props) {
               height: 70,
             }}
           >
-            <TouchableOpacity style={{ margin: 10 }} onPress={handleGallery}>
+            <TouchableOpacity style={{ margin: 0 ,padding:20}} onPress={handleGallery}>
               <FontAwesome name="upload" size={22} color="#000" />
             </TouchableOpacity>
             {activityImageName && (
@@ -167,7 +171,7 @@ export default function ModaleComponent(props) {
           </View>
           {/* Message d'erreur éventuel */}
           {!errorMessage !== "" && (
-            <Text
+            <View
               style={{
                 color: "red",
                 textAlign: "center",
@@ -175,7 +179,7 @@ export default function ModaleComponent(props) {
                 height: 5,
                 borderRadius: 20,
               }}
-            ></Text>
+            ></View>
           )}
           {errorMessage !== "" && (
             <Text
@@ -190,7 +194,7 @@ export default function ModaleComponent(props) {
           )}
         </View>
       )}
-      {/* Contenu texte (zone de description) */}!
+      {/* Contenu texte (zone de description) */}
       {!viewUploadPic && (
         <View style={styles.modalContent}>
           <ScrollView>
