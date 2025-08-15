@@ -170,7 +170,7 @@ export default function GraphsStars(props) {
         chartPressState={state}
         domain={{ x: [-1, 6] }} //définit les limites xmin, ... sur les axes
         viewport={{ x: [-1, 6] }} //définit les limites xmin, ... sur la partie gu graphe tracée
-        domainPadding={{ left: 10, right: 10 }} // complémentaire à padding
+        domainPadding={{ left: 10, right: 10 }} // complémentaire à padding //
       >
         {({ points, chartBounds }) => (
           <>
