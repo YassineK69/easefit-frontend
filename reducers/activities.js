@@ -14,8 +14,12 @@ export const activitiesSlice = createSlice({
     loadActivities : (state, action) => {
         state.value = action.payload;
     }, 
+    addPicture :(state,action) =>{
+      const i = state.value.findIndex(obj=>obj._id === action.payload.idActivity);
+      state.value[i].activitiesPic.push(action.payload.activityPic);
+    }
   },
 });
 
-export const {addNewActivity, loadActivities} = activitiesSlice.actions;
+export const {addNewActivity, loadActivities, addPicture } = activitiesSlice.actions;
 export default activitiesSlice.reducer;

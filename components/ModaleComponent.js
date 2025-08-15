@@ -21,6 +21,8 @@ export default function ModaleComponent(props) {
   const [activityImageName, setActivityImageName] = useState(null);
   const [errorMessage, setErrorMessage] = useState("");
   const token = useSelector((state) => state.user.value.token);
+  const dataActivities = useSelector((state) => state.activities.value);
+  const dispatch = useDispatch();
 
   const handleGallery = async () => {
     const permissionResult =
@@ -54,7 +56,7 @@ export default function ModaleComponent(props) {
 
   const handleRegister = () => {
     const formData = new FormData();
-    formData.append("idActivity", selectedActivity.idActivity);
+    formData.append("idActivity", selectedActivity._id);
     if (activityImageUri) {
       formData.append("activitiesPic", {
         uri: activityImageUri,

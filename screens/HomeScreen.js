@@ -23,6 +23,8 @@ export default function HomeScreen({ navigation }) {
   const [markedDates, setMarkedDates] = useState({});
   const [allActivities, setAllActivities] = useState([]);
 
+
+
   // Chargement des activités
   const dataActivities = useSelector((state) => state.activities.value);
   useEffect(() => {
@@ -57,7 +59,7 @@ export default function HomeScreen({ navigation }) {
         comment: act.comment || "Pas de description",
         type: act.type || "",
         activitiesPic:act.activitiesPic,
-        idActivity: act._id,
+        _id: act._id,
       };
     });
     if (!newMarkedDates[today]) {
@@ -81,6 +83,8 @@ export default function HomeScreen({ navigation }) {
       setModalVisible(false);
     }
   };
+
+ 
                                                                           // j'ai enlevé le bouton pour aller sur graphs
   return (
     <SafeAreaView style={styles.container}>
@@ -152,7 +156,7 @@ export default function HomeScreen({ navigation }) {
         onRequestClose={() => setModalVisible(false)}
       >
         <View style={styles.modalOverlay}>
-          <Carroussel selectedActivity={selectedActivity} />
+          <Carroussel selectedActivity={selectedActivity}  />
           <Pressable
             style={styles.closeButton}
             onPress={() => setModalVisible(false)}
