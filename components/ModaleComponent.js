@@ -1,18 +1,18 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
-  SafeAreaView,
-  Modal,
-  Pressable,
   ImageBackground,
   ScrollView,
+  Dimensions,
 } from "react-native";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import * as ImagePicker from "expo-image-picker";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
+
+const { width } = Dimensions.get("window");
 
 export default function ModaleComponent(props) {
   const selectedActivity = props.selectedActivity;
@@ -29,18 +29,15 @@ export default function ModaleComponent(props) {
       alert("Permission d'accéder à la galerie refusée !");
       return;
     }
-
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
     });
-
     if (!result.canceled) {
       const fullUri = result.assets[0].uri;
       setActivityImageUri(fullUri);
-
       const fullName = fullUri.split("/").pop();
       const ext = fullName.split(".").pop();
       const namePart = fullName.slice(0, 8);
@@ -65,8 +62,6 @@ export default function ModaleComponent(props) {
         type: "image/jpeg",
       });
     }
-    console.log("id ", selectedActivity.idActivity, "IMAGE ", activityImageUri);
-    console.log("formData", formData);
     fetch(
       `${process.env.EXPO_PUBLIC_URL_VERCEL}/activities/addPicture/${token}`,
       {
@@ -76,126 +71,76 @@ export default function ModaleComponent(props) {
     )
       .then((response) => response.json())
       .then((data) => {
-        if (data.result) {
-          //dispatch(addNewActivity(data.newActivity));
-          console.log("photo sauvegardée");
-        } else {
+        if (!data.result) {
           setErrorMessage(data.error);
-          console.log("erreur retournée", data.error);
         }
       });
   };
 
   return (
     <View style={styles.modalContainer}>
-      {/* Image de fond + titre + minutes + étoiles */}
       <ImageBackground
-        source={require("../assets/fondnewactivity.jpg")}
-        style={styles.modalImageBackground}
-        imageStyle={{ borderTopLeftRadius: 0, borderTopRightRadius: 0 }}
+        source={require("../assets/images//fond-d-ecran-iphone-degrade-bulle-d-huile-dans-le-fond-de-l-eau.jpg")}
+        imageStyle={{ borderTopLeftRadius: 20, borderTopRightRadius: 20 }}
+        blurRadius={1}
       >
-        <View style={styles.modalHeader}>
-          <Text style={styles.modalHeaderTitle}>
-            {selectedActivity?.title?.toUpperCase()}
-          </Text>
-          <TouchableOpacity
-            onPress={() => handleAddPic()}
-            style={{ borderWidth: 0, borderColor: "#fff" }}
-          >
-            <FontAwesome
-              name={viewUploadPic ? "arrow-up" : "file-photo-o"}
-              size={30}
-              color={!viewUploadPic ? "#fff" : "#fff"}
-              style={{ padding: 10 }}
-            />
-          </TouchableOpacity>
-        </View>
+        {/* Fond clair semi-opaque pour titre + infos */}
+        <View style={styles.headerBackground}>
+          <View style={styles.modalHeader}>
+            <Text style={styles.modalHeaderTitle}>
+              {selectedActivity?.title?.toUpperCase()}
+            </Text>
 
-        <View style={styles.modalTopRow}>
-          {/* Minutes */}
-          <Text style={styles.modalDuration}>
-            {selectedActivity?.duration} MIN
-          </Text>
-          {/* Étoiles */}
-          <View style={styles.starContainer}>
-            {[...Array(5)].map((_, i) => (
-              <Text key={i} style={styles.star}>
-                {i < selectedActivity?.rating ? "★" : "☆"}
-              </Text>
-            ))}
+            {/* Bouton galerie entouré */}
+            <TouchableOpacity onPress={handleAddPic} style={styles.galleryButton}>
+              <FontAwesome
+                name={viewUploadPic ? "arrow-up" : "file-photo-o"}
+                size={18}
+                color="#fff"
+              />
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.modalTopRow}>
+            <Text style={styles.modalDuration}>
+              {selectedActivity?.duration} MIN
+            </Text>
+            <View style={styles.starContainer}>
+              {[...Array(5)].map((_, i) => (
+                <Text key={i} style={styles.star}>
+                  {i < selectedActivity?.rating ? "★" : "☆"}
+                </Text>
+              ))}
+            </View>
           </View>
         </View>
       </ImageBackground>
-      {/* Contenu de la fenêtre pour la saisie des images */}
-      {viewUploadPic && (
-        <View style={{ borderRadius: 20, borderWidth: 0 }}>
-          <View
-            style={{
-              borderColor: "#f00",
-              flexDirection: "row",
-              borderWidth: 0,
-              justifyContent: "space-between",
-              alignItems: "center",
-              width: "100%",
-              padding: 2,
-              height: 70,
-            }}
-          >
+
+      {viewUploadPic ? (
+        <View style={styles.uploadContainer}>
+          <View style={styles.uploadRow}>
             <TouchableOpacity style={{ margin: 10 }} onPress={handleGallery}>
-              <FontAwesome name="upload" size={22} color="#000" />
+              <FontAwesome name="upload" size={22} color="#DA341B" />
             </TouchableOpacity>
             {activityImageName && (
-              <Text style={{ color: "#000", marginTop: 5 }}>
-                {activityImageName}
-              </Text>
+              <Text style={styles.imageName}>{activityImageName}</Text>
             )}
             <TouchableOpacity
-              style={{ backgroundColor: "#000", borderRadius: 10, margin: 5 }}
+              style={styles.registerButton}
               onPress={handleRegister}
             >
-              <Text
-                style={{
-                  fontSize: 16,
-                  fontWeight: "700",
-                  margin: 5,
-                  color: "#fff",
-                }}
-              >
-                Enregistrer
-              </Text>
+              <Text style={styles.registerButtonText}>Enregistrer</Text>
             </TouchableOpacity>
           </View>
-          {/* Message d'erreur éventuel */}
-          {!errorMessage !== "" && (
-            <Text
-              style={{
-                color: "red",
-                textAlign: "center",
-                marginVertical: 0,
-                height: 5,
-                borderRadius: 20,
-              }}
-            ></Text>
-          )}
           {errorMessage !== "" && (
-            <Text
-              style={{
-                color: "red",
-                textAlign: "center",
-                marginVertical: 0,
-              }}
-            >
-              {errorMessage}
-            </Text>
+            <Text style={styles.errorText}>{errorMessage}</Text>
           )}
         </View>
-      )}
-      {/* Contenu texte (zone de description) */}!
-      {!viewUploadPic && (
-        <View style={styles.modalContent}>
-          <ScrollView>
-            <Text style={styles.modalDescription}>
-              {selectedActivity?.comment}
+      ) : (
+        <View style={styles.commentContainer}>
+          <ScrollView contentContainerStyle={{ padding: 15 }}>
+            <Text style={styles.commentText}>
+              {selectedActivity?.comment || "Pas de description disponible."}
             </Text>
           </ScrollView>
         </View>
@@ -206,67 +151,105 @@ export default function ModaleComponent(props) {
 
 const styles = StyleSheet.create({
   modalContainer: {
-    width: "100%",
-    backgroundColor: "#fafafa",
-    borderRadius: 25,
+    width: width * 0.9,
+    alignSelf: "center",
+    backgroundColor: "#fff",
+    borderRadius: 20,
     overflow: "hidden",
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 5 },
+    elevation: 5,
+  },
+  headerBackground: {
+    backgroundColor: "rgba(247, 247, 247, 0.11)",
+    paddingHorizontal: 15,
+    paddingVertical: 12,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
   },
   modalHeader: {
     flexDirection: "row",
-    justifyContent: "space-around",
-    paddingVertical: 20,
+    justifyContent: "space-between",
+    paddingVertical: 5,
     alignItems: "center",
   },
   modalHeaderTitle: {
     fontSize: 20,
     fontWeight: "bold",
-    color: "white",
+    color: "#ffffffff",
   },
-  modalImageBackground: {
-    height: 150,
-    paddingHorizontal: 20,
-    paddingVertical: 15,
+  galleryButton: {
+    width: 34,
+    height: 34,
+    borderRadius: 10,
+    backgroundColor: "#DA341B",
+    justifyContent: "center",
+    alignItems: "center",
   },
   modalTopRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    paddingTop: 8,
   },
   modalDuration: {
-    color: "white",
+    color: "#ffffffff",
     fontWeight: "bold",
-    fontSize: 18,
+    fontSize: 16,
   },
-  starContainer: { flexDirection: "row" },
+  starContainer: {
+    flexDirection: "row",
+  },
   star: {
     color: "#ffd700",
-    fontSize: 20,
+    fontSize: 18,
     marginHorizontal: 2,
   },
-  modalContent: {
-    padding: 20,
+  uploadContainer: {
+    margin: 10,
+    padding: 10,
+    backgroundColor: "#f7f7f7",
+    borderRadius: 15,
   },
-  modalDescription: {
-    fontSize: 16,
-    marginBottom: 20,
-  },
-  closeButton: {
-    backgroundColor: "#5e2a84",
-    borderRadius: 8,
-    paddingVertical: 10,
-  },
-  closeButtonText: {
-    textAlign: "center",
-    color: "white",
-    fontWeight: "bold",
-  },
-  fakeInput: {
-    height: 45,
-    borderRadius: 10,
-    backgroundColor: "rgba(255,255,255,0.1)",
-    justifyContent: "center",
+  uploadRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
     alignItems: "center",
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.3)",
+  },
+  imageName: {
+    color: "#333",
+    flex: 1,
+    marginLeft: 5,
+    marginTop: 5,
+  },
+  registerButton: {
+    backgroundColor: "#6B3462",
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+  },
+  registerButtonText: {
+    fontSize: 15,
+    fontWeight: "600",
+    color: "#fff",
+  },
+  errorText: {
+    color: "red",
+    textAlign: "center",
+    marginTop: 5,
+  },
+  commentContainer: {
+    margin: 10,
+    backgroundColor: "#f7f7f7",
+    borderRadius: 15,
+    padding: 15,
+    maxHeight: 180,
+  },
+  commentText: {
+    fontSize: 15,
+    color: "#333",
+    lineHeight: 22,
   },
 });
