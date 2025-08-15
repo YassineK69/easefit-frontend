@@ -1,4 +1,4 @@
-import { useRef , useState} from "react";
+import { useRef, useState } from "react";
 import { Dimensions, Text, View, StyleSheet, Image } from "react-native";
 import { useSharedValue } from "react-native-reanimated";
 
@@ -9,31 +9,30 @@ import Carousel, {
 import ModaleComponent from "./ModaleComponent";
 import { useSelector } from "react-redux";
 
-
 const width = Dimensions.get("window").width;
 const height = 250;
 
-
-
-
 //***************************************** */
 export default function Carroussel(props) {
-const dataActivities = useSelector((state) => state.activities.value);
-console.log("CARROUSSEL")
-console.log('props.selectedActivity : ',props.selectedActivity)
-console.log('dataActivities',dataActivities)
+  const dataActivities = useSelector((state) => state.activities.value);
+  console.log("CARROUSSEL");
+  console.log("props.selectedActivity : ", props.selectedActivity);
+  console.log("dataActivities", dataActivities);
 
-const selectedActivity = dataActivities.find(e => props.selectedActivity._id == e._id)
- 
-  const data = selectedActivity.activitiesPic.map((uri,i)=>{
+  const selectedActivity = dataActivities.find(
+    (e) => props.selectedActivity._id == e._id
+  );
+  console.log("selectedActivity", selectedActivity);
+
+  const data = selectedActivity.activitiesPic.map((uri, i) => {
     const newObj = {
-      id: i+1,
+      id: i + 1,
       uri: uri,
     };
     return newObj;
-  })
+  });
 
-  data.unshift({ id: 0})
+  data.unshift({ id: 0 });
 
   const ref = useRef(null);
   const progress = useSharedValue(0);
@@ -46,7 +45,7 @@ const selectedActivity = dataActivities.find(e => props.selectedActivity._id == 
   };
 
   return (
-    <View style={{borderWidth: 0, borderColor: "#fafafa" }}>
+    <View style={{ borderWidth: 0, borderColor: "#fafafa" }}>
       <Carousel
         ref={ref}
         width={width}
@@ -55,19 +54,19 @@ const selectedActivity = dataActivities.find(e => props.selectedActivity._id == 
         onProgressChange={progress}
         renderItem={({ item }) => {
           if (item.id === 0) {
-            return <ModaleComponent selectedActivity={props.selectedActivity} />;
+            return (
+              <ModaleComponent selectedActivity={props.selectedActivity} />
+            );
           } else {
-
             return (
               <View
                 style={{
                   flex: 1,
                   borderWidth: 0,
                   justifyContent: "center",
-                  
                 }}
               >
-                <Image  source={{uri: item.uri} }  style={styles.image} />
+                <Image source={{ uri: item.uri }} style={styles.image} />
               </View>
             );
           }
@@ -92,7 +91,6 @@ const styles = StyleSheet.create({
     height: height,
     resizeMode: "cover",
     borderRadius: 25,
-
   },
   title: {
     position: "absolute",

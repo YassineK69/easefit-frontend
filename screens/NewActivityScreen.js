@@ -111,6 +111,7 @@ export default function NewActivityScreen({ navigation }) {
       .then((data) => {
         if (data.result) {
           dispatch(addNewActivity(data.newActivity));
+          console.log('data.newActivity',data.newActivity)
           resetForm();
           navigation.navigate("TabNavigator", { screen: "Home" });
         } else {
